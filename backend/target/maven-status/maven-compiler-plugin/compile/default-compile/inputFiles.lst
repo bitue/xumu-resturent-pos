@@ -1,9 +1,12 @@
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\controller\AdminPingController.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\controller\AuthController.java
+E:\xumu\backend\src\main\java\com\xuma\pos\auth\controller\UserController.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\dto\LoginRequest.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\dto\RefreshRequest.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\dto\RegisterRequest.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\dto\TokenResponse.java
+E:\xumu\backend\src\main\java\com\xuma\pos\auth\dto\UpdateUserRolesRequest.java
+E:\xumu\backend\src\main\java\com\xuma\pos\auth\dto\UpdateUserStatusRequest.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\dto\UserResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\entity\AuthProvider.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\entity\Permission.java
@@ -20,6 +23,7 @@ E:\xumu\backend\src\main\java\com\xuma\pos\auth\security\JwtService.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\security\SecurityConfig.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\security\UserPrincipal.java
 E:\xumu\backend\src\main\java\com\xuma\pos\auth\service\AuthService.java
+E:\xumu\backend\src\main\java\com\xuma\pos\auth\service\UserService.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\api\ApiResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\api\ErrorResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\api\PageResponse.java

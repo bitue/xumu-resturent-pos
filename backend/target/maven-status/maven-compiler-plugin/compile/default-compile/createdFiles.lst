@@ -5,6 +5,7 @@ com\xuma\pos\common\entity\AuditableEntity.class
 com\xuma\pos\common\api\PageResponse$PageResponseBuilder.class
 com\xuma\pos\order\repository\OrderRepository.class
 com\xuma\pos\auth\entity\Role.class
+com\xuma\pos\auth\service\UserService.class
 com\xuma\pos\auth\dto\RegisterRequest.class
 com\xuma\pos\report\service\ReportService.class
 com\xuma\pos\order\state\OrderStateMachine.class
@@ -40,6 +41,7 @@ com\xuma\pos\auth\entity\RefreshToken$RefreshTokenBuilder.class
 com\xuma\pos\auth\entity\Permission.class
 com\xuma\pos\menu\repository\AllergenRepository.class
 com\xuma\pos\report\dto\CustomerLtvResponse.class
+com\xuma\pos\auth\controller\UserController.class
 com\xuma\pos\table\mapper\TableMapper.class
 com\xuma\pos\common\api\ApiResponse$ApiResponseBuilder.class
 com\xuma\pos\menu\dto\MenuItemResponse$MenuItemResponseBuilder.class
@@ -58,6 +60,7 @@ com\xuma\pos\common\exception\GlobalExceptionHandler.class
 com\xuma\pos\common\entity\SoftDeletableEntity.class
 com\xuma\pos\auth\security\JwtService.class
 com\xuma\pos\table\controller\TableController.class
+com\xuma\pos\auth\dto\UpdateUserRolesRequest.class
 com\xuma\pos\common\api\PageResponse.class
 com\xuma\pos\auth\entity\Role$RoleBuilder.class
 com\xuma\pos\customer\entity\Customer$CustomerBuilder.class
@@ -117,6 +120,7 @@ com\xuma\pos\auth\dto\UserResponse$UserResponseBuilder.class
 com\xuma\pos\order\entity\OrderItemStatus.class
 com\xuma\pos\table\mapper\TableMapperImpl.class
 com\xuma\pos\table\entity\TableStatus.class
+com\xuma\pos\auth\dto\UpdateUserStatusRequest.class
 com\xuma\pos\order\dto\OrderResponse.class
 com\xuma\pos\common\api\ErrorResponse.class
 com\xuma\pos\menu\mapper\MenuItemMapperImpl.class

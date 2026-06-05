@@ -48,6 +48,12 @@ public class MenuService {
         });
     }
 
+    public List<MenuItemResponse> getAllMenuItemsAdmin() {
+        return menuItemRepository.findAll().stream()
+                .map(menuItemMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public MenuItemResponse createMenuItem(CreateMenuItemRequest request) {
         Category category = categoryRepository.findById(request.getCategoryId())

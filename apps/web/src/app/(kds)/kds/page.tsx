@@ -88,20 +88,93 @@ function TicketCard({ ticket, onMove }: { ticket: Ticket; onMove: (id: string, t
 }
 
 export default function KdsPage() {
-  const [tickets, setTickets] = useState<Ticket[]>(mockInitialTickets);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
 
-  // In a real app, this updates the cache from WS messages
-  useStompSubscription<Ticket>('/topic/orders/new', (newTicket) => {
-    setTickets(prev => [newTicket, ...prev]);
+  useEffect(() => {
+    async function fetchKds() {
+      try {
+        const { apiFetch } = await import('@/lib/api/client');
+        const items = await apiFetch<any[]>('/api/kds/active');
+        
+        // Group items by orderNumber into Tickets
+        const ticketMap = new Map<string, Ticket>();
+        for (const item of items) {
+          if (!ticketMap.has(item.orderNumber)) {
+            ticketMap.set(item.orderNumber, {
+              id: item.orderNumber,
+              tableId: 0, // Not provided in KdsItemResponse, default to 0
+              status: item.status, // take status of first item
+              createdAt: item.orderedAt,
+              items: []
+            });
+          }
+          ticketMap.get(item.orderNumber)!.items.push({
+            name: item.menuItemName,
+            qty: item.quantity,
+            note: item.specialRequest
+          });
+          // Note: store original item ID if we want to update item by item, but for now we'll do whole ticket
+          (ticketMap.get(item.orderNumber) as any).itemIds = (ticketMap.get(item.orderNumber) as any).itemIds || [];
+          (ticketMap.get(item.orderNumber) as any).itemIds.push(item.id);
+        }
+        setTickets(Array.from(ticketMap.values()));
+      } catch (e) {
+        console.error('Failed to fetch KDS items', e);
+      }
+    }
+    fetchKds();
+  }, []);
+
+  // Subscribe to real-time updates
+  useStompSubscription<any>('/topic/kds', (update) => {
+    // Basic logic to refresh the page if a new item comes in
+    // In production we would smartly update the ticket list
+    const { apiFetch } = require('@/lib/api/client');
+    apiFetch('/api/kds/active').then((items: any) => {
+      const ticketMap = new Map<string, Ticket>();
+      for (const item of items) {
+        if (!ticketMap.has(item.orderNumber)) {
+          ticketMap.set(item.orderNumber, {
+            id: item.orderNumber,
+            tableId: 0,
+            status: item.status,
+            createdAt: item.orderedAt,
+            items: []
+          });
+        }
+        ticketMap.get(item.orderNumber)!.items.push({
+          name: item.menuItemName,
+          qty: item.quantity,
+          note: item.specialRequest
+        });
+        (ticketMap.get(item.orderNumber) as any).itemIds = (ticketMap.get(item.orderNumber) as any).itemIds || [];
+        (ticketMap.get(item.orderNumber) as any).itemIds.push(item.id);
+      }
+      setTickets(Array.from(ticketMap.values()));
+    });
   });
 
-  const handleMove = (id: string, newStatus: OrderStatus) => {
-    // In a real app, we would also emit an API call/STOMP message here
-    if (newStatus === 'PENDING') {
-      // Mock 'Served' by removing from KDS for now if it was READY and clicked again
-      setTickets(prev => prev.filter(t => t.id !== id));
-    } else {
-      setTickets(prev => prev.map(t => t.id === id ? { ...t, status: newStatus } : t));
+  const handleMove = async (id: string, newStatus: OrderStatus) => {
+    try {
+      const ticket = tickets.find(t => t.id === id) as any;
+      if (!ticket) return;
+
+      const { apiFetch } = await import('@/lib/api/client');
+      // Update each item in the ticket
+      for (const itemId of ticket.itemIds) {
+        await apiFetch(`/api/kds/items/${itemId}/status`, {
+          method: 'PATCH',
+          body: JSON.stringify({ status: newStatus })
+        });
+      }
+
+      if (newStatus === 'PENDING') {
+        setTickets(prev => prev.filter(t => t.id !== id));
+      } else {
+        setTickets(prev => prev.map(t => t.id === id ? { ...t, status: newStatus } : t));
+      }
+    } catch (e) {
+      console.error('Failed to move ticket', e);
     }
   };
 

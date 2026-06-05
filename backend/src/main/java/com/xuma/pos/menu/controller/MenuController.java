@@ -32,6 +32,12 @@ public class MenuController {
 
     // --- Admin Endpoints ---
 
+    @GetMapping("/api/admin/menu/items")
+    @PreAuthorize("hasAuthority('menu:write')")
+    public ApiResponse<List<MenuItemResponse>> getAllMenuItemsAdmin() {
+        return ApiResponse.ok(menuService.getAllMenuItemsAdmin());
+    }
+
     @PostMapping("/api/admin/menu/items")
     @PreAuthorize("hasAuthority('menu:write')")
     public ApiResponse<MenuItemResponse> createMenuItem(@Valid @RequestBody CreateMenuItemRequest request) {

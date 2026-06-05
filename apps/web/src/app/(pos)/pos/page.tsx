@@ -68,9 +68,19 @@ export default function PosTerminalPage() {
         body: JSON.stringify(orderPayload)
       });
 
+      // 1b. Process dummy payment so it registers as PAID
+      await apiFetch(`/api/orders/${order.id}/payments`, {
+        method: 'POST',
+        body: JSON.stringify({
+          amount: total,
+          method: 'CASH',
+          reference: 'DUMMY-PAYMENT'
+        })
+      });
+
       // 2. Clear cart
       cart.clear();
-      alert(`Order ${order.orderNumber} created successfully!`);
+      alert(`Order ${order.orderNumber} placed & paid successfully!`);
     } catch (e) {
       console.error('Checkout failed', e);
       alert('Checkout failed');

@@ -1,24 +1,63 @@
 'use client';
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-
-const data = [
-  { name: 'Ma', revenue: 4000 },
-  { name: 'Di', revenue: 3000 },
-  { name: 'Wo', revenue: 2000 },
-  { name: 'Do', revenue: 2780 },
-  { name: 'Vr', revenue: 6890 },
-  { name: 'Za', revenue: 8390 },
-  { name: 'Zo', revenue: 7490 },
-];
+import { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api/client';
 
 export default function AdminDashboardPage() {
+  const [sales, setSales] = useState<{name: string, revenue: number}[]>([]);
+  const [topItems, setTopItems] = useState<{name: string, count: number}[]>([]);
+  const [stats, setStats] = useState({
+    totalRevenue: 0,
+    totalOrders: 0,
+    averageSpend: 0
+  });
+
+  useEffect(() => {
+    async function fetchDashboard() {
+      try {
+        const now = new Date();
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        
+        // Fetch Daily Sales
+        const dailySales = await apiFetch<any[]>(`/api/reports/daily-sales?startDate=${sevenDaysAgo.toISOString()}&endDate=${now.toISOString()}`);
+        
+        let rev = 0;
+        let orders = 0;
+        
+        const chartData = dailySales.map(s => {
+          rev += s.totalRevenue;
+          orders += s.totalOrders;
+          return {
+            name: new Date(s.date).toLocaleDateString('nl-NL', { weekday: 'short' }),
+            revenue: s.totalRevenue
+          };
+        }).reverse(); // Since API returns DESC
+        
+        setSales(chartData);
+        setStats({
+          totalRevenue: rev,
+          totalOrders: orders,
+          averageSpend: orders > 0 ? rev / orders : 0
+        });
+
+        // Fetch Top Items
+        const top = await apiFetch<any[]>('/api/reports/top-items?limit=5');
+        setTopItems(top.map(t => ({ name: t.menuItemName, count: t.quantitySold })));
+
+      } catch (e) {
+        console.error('Failed to fetch dashboard data', e);
+      }
+    }
+    fetchDashboard();
+  }, []);
+
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-display font-bold text-[color:var(--delft-900)]">Dashboard</h1>
         <div className="px-4 py-2 bg-white border border-[color:var(--border)] rounded-md shadow-sm text-sm font-medium text-[color:var(--ink-soft)]">
-          Deze week
+          Laatste 7 Dagen
         </div>
       </div>
 
@@ -26,23 +65,20 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white p-6 rounded-xl border border-[color:var(--border)] shadow-sm">
           <p className="text-sm font-medium text-[color:var(--text-muted)] mb-1">Omzet</p>
-          <p className="text-3xl font-display font-bold text-[color:var(--ink)]">€ 34.550</p>
-          <p className="text-sm text-[color:var(--success)] mt-2 font-medium">+12% vs vorige week</p>
+          <p className="text-3xl font-display font-bold text-[color:var(--ink)]">€ {stats.totalRevenue.toFixed(2)}</p>
         </div>
         <div className="bg-white p-6 rounded-xl border border-[color:var(--border)] shadow-sm">
           <p className="text-sm font-medium text-[color:var(--text-muted)] mb-1">Bestellingen</p>
-          <p className="text-3xl font-display font-bold text-[color:var(--ink)]">482</p>
-          <p className="text-sm text-[color:var(--success)] mt-2 font-medium">+5% vs vorige week</p>
+          <p className="text-3xl font-display font-bold text-[color:var(--ink)]">{stats.totalOrders}</p>
         </div>
         <div className="bg-white p-6 rounded-xl border border-[color:var(--border)] shadow-sm">
           <p className="text-sm font-medium text-[color:var(--text-muted)] mb-1">Gemiddelde Besteding</p>
-          <p className="text-3xl font-display font-bold text-[color:var(--ink)]">€ 71,68</p>
-          <p className="text-sm text-[color:var(--success)] mt-2 font-medium">+2% vs vorige week</p>
+          <p className="text-3xl font-display font-bold text-[color:var(--ink)]">€ {stats.averageSpend.toFixed(2)}</p>
         </div>
         <div className="bg-white p-6 rounded-xl border border-[color:var(--border)] shadow-sm">
           <p className="text-sm font-medium text-[color:var(--text-muted)] mb-1">Top Gerecht</p>
-          <p className="text-2xl font-display font-bold text-[color:var(--ink)]">Zeeuwse Oesters</p>
-          <p className="text-sm text-[color:var(--text-muted)] mt-2">142x besteld</p>
+          <p className="text-xl font-display font-bold text-[color:var(--ink)] truncate">{topItems[0]?.name || 'N/A'}</p>
+          <p className="text-sm text-[color:var(--text-muted)] mt-2">{topItems[0]?.count || 0}x besteld</p>
         </div>
       </div>
 
@@ -52,7 +88,7 @@ export default function AdminDashboardPage() {
           <h2 className="text-lg font-bold text-[color:var(--ink)] mb-6">Omzet (Laatste 7 dagen)</h2>
           <div className="h-80 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data}>
+              <LineChart data={sales}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8DCC8" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#8c7d70'}} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{fill: '#8c7d70'}} tickFormatter={(value) => `€${value}`} dx={-10} />
@@ -82,19 +118,8 @@ export default function AdminDashboardPage() {
             </span>
           </div>
           <div className="flex-1 flex flex-col justify-center items-center text-center space-y-2">
-            <span className="text-5xl font-display font-bold text-[color:var(--ink)]">8</span>
+            <span className="text-5xl font-display font-bold text-[color:var(--ink)]">-</span>
             <span className="text-[color:var(--text-muted)]">Actieve Bonnen</span>
-            
-            <div className="w-full flex gap-2 mt-6">
-              <div className="flex-1 bg-[color:var(--bg-alt)] p-3 rounded-lg border border-[color:var(--border)]">
-                <span className="block text-2xl font-bold text-[color:var(--primary)]">3</span>
-                <span className="text-xs text-[color:var(--text-muted)] uppercase tracking-wider">Pending</span>
-              </div>
-              <div className="flex-1 bg-[color:var(--bg-alt)] p-3 rounded-lg border border-[color:var(--border)]">
-                <span className="block text-2xl font-bold text-[color:var(--success)]">5</span>
-                <span className="text-xs text-[color:var(--text-muted)] uppercase tracking-wider">Cooking</span>
-              </div>
-            </div>
             
             <a href="/kds" className="mt-8 text-[color:var(--primary)] text-sm font-medium hover:underline inline-flex items-center gap-1">
               Open KDS Scherm &rarr;
