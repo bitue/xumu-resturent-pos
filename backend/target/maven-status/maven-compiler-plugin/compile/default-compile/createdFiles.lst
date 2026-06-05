@@ -24,9 +24,11 @@ com\xuma\pos\auth\security\UserPrincipal.class
 com\xuma\pos\order\dto\UpdateOrderStatusRequest.class
 com\xuma\pos\menu\entity\Allergen.class
 com\xuma\pos\auth\dto\TokenResponse$TokenResponseBuilder.class
+com\xuma\pos\customer\controller\CustomerController.class
 com\xuma\pos\common\api\ErrorResponse$ErrorResponseBuilder.class
 com\xuma\pos\menu\dto\CreateMenuItemRequest.class
 com\xuma\pos\order\entity\Order.class
+com\xuma\pos\customer\dto\CustomerResponse.class
 com\xuma\pos\auth\security\CurrentUser.class
 com\xuma\pos\payment\service\PaymentService.class
 com\xuma\pos\table\entity\RestaurantTable$RestaurantTableBuilder.class
@@ -37,6 +39,7 @@ com\xuma\pos\table\dto\TableResponse.class
 com\xuma\pos\auth\entity\RefreshToken$RefreshTokenBuilder.class
 com\xuma\pos\auth\entity\Permission.class
 com\xuma\pos\menu\repository\AllergenRepository.class
+com\xuma\pos\report\dto\CustomerLtvResponse.class
 com\xuma\pos\table\mapper\TableMapper.class
 com\xuma\pos\common\api\ApiResponse$ApiResponseBuilder.class
 com\xuma\pos\menu\dto\MenuItemResponse$MenuItemResponseBuilder.class
@@ -57,8 +60,10 @@ com\xuma\pos\auth\security\JwtService.class
 com\xuma\pos\table\controller\TableController.class
 com\xuma\pos\common\api\PageResponse.class
 com\xuma\pos\auth\entity\Role$RoleBuilder.class
+com\xuma\pos\customer\entity\Customer$CustomerBuilder.class
 com\xuma\pos\payment\entity\PaymentMethod.class
 com\xuma\pos\order\dto\KdsItemResponse.class
+com\xuma\pos\customer\mapper\CustomerMapperImpl.class
 com\xuma\pos\menu\mapper\MenuItemMapper.class
 com\xuma\pos\common\config\WebSocketConfig.class
 com\xuma\pos\order\entity\OrderType.class
@@ -78,6 +83,7 @@ com\xuma\pos\menu\service\MenuService.class
 com\xuma\pos\table\service\TableService.class
 com\xuma\pos\payment\mapper\PaymentMapperImpl.class
 com\xuma\pos\auth\security\JwtAuthEntryPoint.class
+com\xuma\pos\report\dto\OrderTypeAnalyticsResponse.class
 com\xuma\pos\menu\dto\CategoryResponse.class
 com\xuma\pos\auth\entity\AuthProvider.class
 com\xuma\pos\payment\dto\PaymentRequest.class
@@ -85,10 +91,13 @@ com\xuma\pos\menu\dto\MenuItemResponse.class
 com\xuma\pos\auth\dto\TokenResponse.class
 com\xuma\pos\order\exception\InvalidOrderStateException.class
 com\xuma\pos\auth\repository\RoleRepository.class
+com\xuma\pos\report\dto\RevenueAnalyticsResponse.class
 com\xuma\pos\auth\service\AuthService.class
 com\xuma\pos\order\controller\OrderController.class
+com\xuma\pos\customer\mapper\CustomerMapper.class
 com\xuma\pos\menu\controller\MenuController.class
 com\xuma\pos\payment\entity\Payment$PaymentBuilder.class
+com\xuma\pos\customer\entity\Customer.class
 com\xuma\pos\menu\entity\Allergen$AllergenBuilder.class
 com\xuma\pos\auth\security\JwtAuthFilter.class
 com\xuma\pos\payment\mapper\PaymentMapper.class
@@ -96,8 +105,10 @@ com\xuma\pos\XumaPosApplication.class
 com\xuma\pos\payment\repository\PaymentRepository.class
 com\xuma\pos\table\repository\RestaurantTableRepository.class
 com\xuma\pos\common\exception\UnauthorizedException.class
+com\xuma\pos\report\dto\NewVsReturningResponse.class
 com\xuma\pos\common\exception\ValidationException.class
 com\xuma\pos\menu\entity\MenuItem.class
+com\xuma\pos\customer\repository\CustomerRepository.class
 com\xuma\pos\order\entity\OrderStatus.class
 com\xuma\pos\auth\entity\User$UserBuilder.class
 com\xuma\pos\menu\dto\UpdateMenuItemRequest.class
@@ -109,5 +120,7 @@ com\xuma\pos\table\entity\TableStatus.class
 com\xuma\pos\order\dto\OrderResponse.class
 com\xuma\pos\common\api\ErrorResponse.class
 com\xuma\pos\menu\mapper\MenuItemMapperImpl.class
+com\xuma\pos\customer\service\CustomerService.class
 com\xuma\pos\menu\dto\CategoryResponse$CategoryResponseBuilder.class
+com\xuma\pos\customer\dto\CustomerRequest.class
 com\xuma\pos\order\service\KdsService.class

@@ -36,4 +36,35 @@ public class ReportController {
             @RequestParam(defaultValue = "10") int limit) {
         return ResponseEntity.ok(ApiResponse.ok(reportService.getTopSellingItems(limit)));
     }
+
+    @GetMapping("/order-type-analytics")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<com.xuma.pos.report.dto.OrderTypeAnalyticsResponse>>> getOrderTypeAnalytics(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return ResponseEntity.ok(ApiResponse.ok(reportService.getOrderTypeAnalytics(startDate, endDate)));
+    }
+
+    @GetMapping("/hourly-revenue")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<com.xuma.pos.report.dto.RevenueAnalyticsResponse>>> getHourlyRevenue(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return ResponseEntity.ok(ApiResponse.ok(reportService.getHourlyRevenue(startDate, endDate)));
+    }
+
+    @GetMapping("/customers/top-ltv")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<List<com.xuma.pos.report.dto.CustomerLtvResponse>>> getTopCustomersLtv(
+            @RequestParam(defaultValue = "10") int limit) {
+        return ResponseEntity.ok(ApiResponse.ok(reportService.getTopCustomersLtv(limit)));
+    }
+
+    @GetMapping("/customers/new-vs-returning")
+    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
+    public ResponseEntity<ApiResponse<com.xuma.pos.report.dto.NewVsReturningResponse>> getNewVsReturningCustomers(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
+        return ResponseEntity.ok(ApiResponse.ok(reportService.getNewVsReturningCustomers(startDate, endDate)));
+    }
 }

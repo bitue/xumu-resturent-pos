@@ -32,6 +32,13 @@ E:\xumu\backend\src\main\java\com\xuma\pos\common\exception\GlobalExceptionHandl
 E:\xumu\backend\src\main\java\com\xuma\pos\common\exception\NotFoundException.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\exception\UnauthorizedException.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\exception\ValidationException.java
+E:\xumu\backend\src\main\java\com\xuma\pos\customer\controller\CustomerController.java
+E:\xumu\backend\src\main\java\com\xuma\pos\customer\dto\CustomerRequest.java
+E:\xumu\backend\src\main\java\com\xuma\pos\customer\dto\CustomerResponse.java
+E:\xumu\backend\src\main\java\com\xuma\pos\customer\entity\Customer.java
+E:\xumu\backend\src\main\java\com\xuma\pos\customer\mapper\CustomerMapper.java
+E:\xumu\backend\src\main\java\com\xuma\pos\customer\repository\CustomerRepository.java
+E:\xumu\backend\src\main\java\com\xuma\pos\customer\service\CustomerService.java
 E:\xumu\backend\src\main\java\com\xuma\pos\menu\controller\MenuController.java
 E:\xumu\backend\src\main\java\com\xuma\pos\menu\dto\CategoryResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\menu\dto\CreateMenuItemRequest.java
@@ -77,7 +84,11 @@ E:\xumu\backend\src\main\java\com\xuma\pos\payment\mapper\PaymentMapper.java
 E:\xumu\backend\src\main\java\com\xuma\pos\payment\repository\PaymentRepository.java
 E:\xumu\backend\src\main\java\com\xuma\pos\payment\service\PaymentService.java
 E:\xumu\backend\src\main\java\com\xuma\pos\report\controller\ReportController.java
+E:\xumu\backend\src\main\java\com\xuma\pos\report\dto\CustomerLtvResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\report\dto\DailySalesResponse.java
+E:\xumu\backend\src\main\java\com\xuma\pos\report\dto\NewVsReturningResponse.java
+E:\xumu\backend\src\main\java\com\xuma\pos\report\dto\OrderTypeAnalyticsResponse.java
+E:\xumu\backend\src\main\java\com\xuma\pos\report\dto\RevenueAnalyticsResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\report\dto\TopItemResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\report\service\ReportService.java
 E:\xumu\backend\src\main\java\com\xuma\pos\table\controller\TableController.java
