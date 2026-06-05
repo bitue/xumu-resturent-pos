@@ -1,0 +1,894 @@
+openapi: 3.1.0
+info:
+  title: Xuma POS API
+  version: 1.0.0
+  description: |
+    Comprehensive OpenAPI contract for the Xuma Restaurant POS system.
+    This serves as the single source of truth for both frontend and backend.
+    Encompasses Auth, Users, Menu, Orders, Tables, Reservations, and Payments.
+servers:
+  - url: http://localhost:8080/api
+    description: Local development backend
+  - url: http://localhost:3000/api
+    description: Next.js API Routes / MSW Mock Server
+
+tags:
+  - name: Auth
+    description: Authentication and Authorization
+  - name: Users
+    description: User, Staff, and Customer profiles
+  - name: Menu
+    description: Categories, Menu Items, and Allergens
+  - name: Orders
+    description: Order lifecycle and management
+  - name: Tables
+    description: Restaurant Tables and Reservations
+  - name: Payments
+    description: Payment processing and Receipts
+  - name: Reports
+    description: Analytics and Reporting
+
+paths:
+  # ---------------------------------------------------------
+  # Auth API
+  # ---------------------------------------------------------
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login user
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Unauthorized
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register new user (customer)
+      operationId: register
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Successful registration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      operationId: refreshToken
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        '200':
+          description: Tokens refreshed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+  /auth/oauth/google:
+    post:
+      tags: [Auth]
+      summary: Google Social Login
+      operationId: googleLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [code]
+              properties:
+                code:
+                  type: string
+      responses:
+        '200':
+          description: Successful login via Google
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  # ---------------------------------------------------------
+  # Users & Profiles API
+  # ---------------------------------------------------------
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get current authenticated user
+      operationId: getCurrentUser
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+  /staff:
+    get:
+      tags: [Users]
+      summary: List all staff members
+      operationId: listStaff
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of staff
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Staff'
+  /customers:
+    get:
+      tags: [Users]
+      summary: List customers
+      operationId: listCustomers
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Customer'
+
+  # ---------------------------------------------------------
+  # Menu API
+  # ---------------------------------------------------------
+  /categories:
+    get:
+      tags: [Menu]
+      summary: Get all categories
+      operationId: listCategories
+      responses:
+        '200':
+          description: List of categories with nested menu items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
+    post:
+      tags: [Menu]
+      summary: Create new category
+      operationId: createCategory
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+                icon: { type: string }
+                sortOrder: { type: integer }
+      responses:
+        '200':
+          description: Category created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Category'
+
+  /menu-items:
+    get:
+      tags: [Menu]
+      summary: Get all menu items
+      operationId: listMenuItems
+      responses:
+        '200':
+          description: List of menu items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuItem'
+    post:
+      tags: [Menu]
+      summary: Create menu item
+      operationId: createMenuItem
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMenuItemRequest'
+      responses:
+        '200':
+          description: Menu item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItem'
+
+  /allergens:
+    get:
+      tags: [Menu]
+      summary: Get all allergens
+      operationId: listAllergens
+      responses:
+        '200':
+          description: List of allergens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Allergen'
+
+  # ---------------------------------------------------------
+  # Orders API
+  # ---------------------------------------------------------
+  /orders:
+    get:
+      tags: [Orders]
+      summary: List orders
+      operationId: listOrders
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [PENDING, PREPARING, READY, SERVED, PAID, CANCELLED]
+      responses:
+        '200':
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Order'
+    post:
+      tags: [Orders]
+      summary: Place a new order
+      operationId: createOrder
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceOrderRequest'
+      responses:
+        '200':
+          description: Order created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{orderId}:
+    get:
+      tags: [Orders]
+      summary: Get order details
+      operationId: getOrder
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  /orders/{orderId}/status:
+    patch:
+      tags: [Orders]
+      summary: Update order status
+      operationId: updateOrderStatus
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [PENDING, PREPARING, READY, SERVED, PAID, CANCELLED]
+      responses:
+        '200':
+          description: Order status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+
+  # ---------------------------------------------------------
+  # Tables & Reservations API
+  # ---------------------------------------------------------
+  /tables:
+    get:
+      tags: [Tables]
+      summary: List all restaurant tables
+      operationId: listTables
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of tables
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RestaurantTable'
+
+  /tables/{tableId}/status:
+    patch:
+      tags: [Tables]
+      summary: Update table status
+      operationId: updateTableStatus
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: tableId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [status]
+              properties:
+                status:
+                  type: string
+                  enum: [AVAILABLE, OCCUPIED, RESERVED]
+      responses:
+        '200':
+          description: Table status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestaurantTable'
+
+  /reservations:
+    get:
+      tags: [Tables]
+      summary: List reservations
+      operationId: listReservations
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: List of reservations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Reservation'
+    post:
+      tags: [Tables]
+      summary: Create a reservation
+      operationId: createReservation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReservationRequest'
+      responses:
+        '200':
+          description: Reservation created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Reservation'
+
+  # ---------------------------------------------------------
+  # Payments & Receipts API
+  # ---------------------------------------------------------
+  /payments:
+    post:
+      tags: [Payments]
+      summary: Process payment for an order
+      operationId: processPayment
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessPaymentRequest'
+      responses:
+        '200':
+          description: Payment processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+
+  /receipts/{receiptId}:
+    get:
+      tags: [Payments]
+      summary: Get receipt details
+      operationId: getReceipt
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: receiptId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Receipt details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+
+  # ---------------------------------------------------------
+  # Reports & Analytics API
+  # ---------------------------------------------------------
+  /reports/sales:
+    get:
+      tags: [Reports]
+      summary: Get sales analytics
+      operationId: getSalesAnalytics
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: startDate
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Sales analytics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SalesAnalytics'
+
+  /reports/customers:
+    get:
+      tags: [Reports]
+      summary: Get customer analytics (repeat customers, retention)
+      operationId: getCustomerAnalytics
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Customer analytics retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerAnalytics'
+
+  /reports/top-items:
+    get:
+      tags: [Reports]
+      summary: Get top selling menu items
+      operationId: getTopItemsAnalytics
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Top items retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopMenuItem'
+
+# =========================================================
+# WEBHOOKS (WebSockets / STOMP Events)
+# =========================================================
+webhooks:
+  newOrder:
+    post:
+      summary: Broadcast new order to Kitchen (STOMP /topic/orders/new)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Event broadcasted successfully
+  orderStatusUpdate:
+    post:
+      summary: Broadcast order status update (STOMP /topic/orders/{id}/status)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+      responses:
+        '200':
+          description: Event broadcasted successfully
+  tableStatusUpdate:
+    post:
+      summary: Broadcast table status update (STOMP /topic/tables/status)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantTable'
+      responses:
+        '200':
+          description: Event broadcasted successfully
+
+# =========================================================
+# COMPONENTS (Schemas, Security, etc.)
+# =========================================================
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # --- Auditing Base ---
+    Auditable:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        version:
+          type: integer
+
+    # --- Auth Requests / Responses ---
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+    RegisterRequest:
+      type: object
+      required: [email, password, fullName]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+        fullName:
+          type: string
+    AuthResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+
+    # --- Identity Entities ---
+    Permission:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+
+    Role:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+        permissions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Permission'
+
+    User:
+      allOf:
+        - $ref: '#/components/schemas/Auditable'
+        - type: object
+          properties:
+            id: { type: integer }
+            email: { type: string, format: email }
+            fullName: { type: string }
+            phone: { type: string }
+            enabled: { type: boolean }
+            provider: { type: string, enum: [LOCAL, GOOGLE] }
+            providerId: { type: string }
+            roles:
+              type: array
+              items:
+                $ref: '#/components/schemas/Role'
+
+    Staff:
+      allOf:
+        - $ref: '#/components/schemas/Auditable'
+        - type: object
+          properties:
+            id: { type: integer }
+            user: { $ref: '#/components/schemas/User' }
+            employeeCode: { type: string }
+            hireDate: { type: string, format: date }
+            active: { type: boolean }
+
+    Customer:
+      allOf:
+        - $ref: '#/components/schemas/Auditable'
+        - type: object
+          properties:
+            id: { type: integer }
+            user: { $ref: '#/components/schemas/User' }
+            loyaltyPoints: { type: integer }
+            lastVisit: { type: string, format: date-time }
+
+    # --- Menu Entities ---
+    Allergen:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+
+    MenuItem:
+      allOf:
+        - $ref: '#/components/schemas/Auditable'
+        - type: object
+          properties:
+            id: { type: integer }
+            name: { type: string }
+            description: { type: string }
+            price: { type: number, format: double }
+            imageUrl: { type: string }
+            available: { type: boolean }
+            featured: { type: boolean }
+            prepTimeMinutes: { type: integer }
+            calories: { type: integer }
+            categoryId: { type: integer }
+            allergens:
+              type: array
+              items:
+                $ref: '#/components/schemas/Allergen'
+
+    Category:
+      allOf:
+        - $ref: '#/components/schemas/Auditable'
+        - type: object
+          properties:
+            id: { type: integer }
+            name: { type: string }
+            icon: { type: string }
+            sortOrder: { type: integer }
+            active: { type: boolean }
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/MenuItem'
+
+    CreateMenuItemRequest:
+      type: object
+      required: [name, price, categoryId]
+      properties:
+        name: { type: string }
+        description: { type: string }
+        price: { type: number, format: double }
+        categoryId: { type: integer }
+        imageUrl: { type: string }
+        prepTimeMinutes: { type: integer }
+        allergensIds:
+          type: array
+          items:
+            type: integer
+
+    # --- Order Entities ---
+    OrderItem:
+      type: object
+      properties:
+        id: { type: integer }
+        quantity: { type: integer }
+        unitPrice: { type: number, format: double }
+        specialRequest: { type: string }
+        status: { type: string, enum: [PENDING, PREPARING, READY, SERVED, CANCELLED] }
+        menuItem: { $ref: '#/components/schemas/MenuItem' }
+
+    Order:
+      allOf:
+        - $ref: '#/components/schemas/Auditable'
+        - type: object
+          properties:
+            id: { type: integer }
+            orderNumber: { type: string }
+            type: { type: string, enum: [DINE_IN, TAKEAWAY, DELIVERY] }
+            status: { type: string, enum: [PENDING, PREPARING, READY, SERVED, PAID, CANCELLED] }
+            subtotal: { type: number, format: double }
+            tax: { type: number, format: double }
+            discount: { type: number, format: double }
+            total: { type: number, format: double }
+            customerNote: { type: string }
+            table: { $ref: '#/components/schemas/RestaurantTable' }
+            assignedWaiter: { $ref: '#/components/schemas/Staff' }
+            customer: { $ref: '#/components/schemas/Customer' }
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/OrderItem'
+            payment: { $ref: '#/components/schemas/Payment' }
+
+    PlaceOrderRequest:
+      type: object
+      required: [orderType, items]
+      properties:
+        orderType: { type: string, enum: [DINE_IN, TAKEAWAY, DELIVERY] }
+        tableId: { type: integer }
+        customerId: { type: integer }
+        items:
+          type: array
+          items:
+            type: object
+            required: [menuItemId, quantity]
+            properties:
+              menuItemId: { type: integer }
+              quantity: { type: integer }
+              specialRequest: { type: string }
+
+    # --- Table Entities ---
+    RestaurantTable:
+      allOf:
+        - $ref: '#/components/schemas/Auditable'
+        - type: object
+          properties:
+            id: { type: integer }
+            tableNumber: { type: string }
+            capacity: { type: integer }
+            section: { type: string, enum: [MAIN, PATIO, BAR, PRIVATE] }
+            status: { type: string, enum: [AVAILABLE, OCCUPIED, RESERVED] }
+
+    Reservation:
+      allOf:
+        - $ref: '#/components/schemas/Auditable'
+        - type: object
+          properties:
+            id: { type: integer }
+            reservationTime: { type: string, format: date-time }
+            partySize: { type: integer }
+            status: { type: string, enum: [PENDING, CONFIRMED, CANCELLED, NO_SHOW, COMPLETED] }
+            customer: { $ref: '#/components/schemas/Customer' }
+            table: { $ref: '#/components/schemas/RestaurantTable' }
+
+    CreateReservationRequest:
+      type: object
+      required: [reservationTime, partySize, customerId]
+      properties:
+        reservationTime: { type: string, format: date-time }
+        partySize: { type: integer }
+        customerId: { type: integer }
+        tableId: { type: integer }
+
+    # --- Payment Entities ---
+    Payment:
+      allOf:
+        - $ref: '#/components/schemas/Auditable'
+        - type: object
+          properties:
+            id: { type: integer }
+            method: { type: string, enum: [CASH, CARD, MOBILE, ONLINE] }
+            status: { type: string, enum: [PENDING, COMPLETED, FAILED, REFUNDED] }
+            amount: { type: number, format: double }
+            stripePaymentIntentId: { type: string }
+            paidAt: { type: string, format: date-time }
+
+    ProcessPaymentRequest:
+      type: object
+      required: [orderId, method]
+      properties:
+        orderId: { type: integer }
+        method: { type: string, enum: [CASH, CARD, MOBILE, ONLINE] }
+        amount: { type: number, format: double }
+
+    Receipt:
+      type: object
+      properties:
+        id: { type: integer }
+        receiptNumber: { type: string }
+        pdfUrl: { type: string }
+        issuedAt: { type: string, format: date-time }
+        payment: { $ref: '#/components/schemas/Payment' }
+
+    # --- Analytics & Reports Entities ---
+    SalesAnalytics:
+      type: object
+      properties:
+        totalRevenue: { type: number, format: double }
+        totalOrders: { type: integer }
+        averageOrderValue: { type: number, format: double }
+        dateRange: { type: string }
+
+    CustomerAnalytics:
+      type: object
+      properties:
+        totalCustomers: { type: integer }
+        newCustomers: { type: integer }
+        repeatCustomers: { type: integer }
+        retentionRatePercentage: { type: number, format: double }
+
+    TopMenuItem:
+      type: object
+      properties:
+        menuItemId: { type: integer }
+        name: { type: string }
+        quantitySold: { type: integer }
+        revenue: { type: number, format: double }
