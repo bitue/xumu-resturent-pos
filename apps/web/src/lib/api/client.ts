@@ -1,4 +1,5 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:8080';
+// TEMPORARY: Set to empty string to hit Next.js mock API routes instead of Spring Boot
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? '';
 
 export class ApiError extends Error {
   constructor(public message: string, public status: number, public errors?: unknown) { super(message); }
@@ -34,5 +35,10 @@ export async function apiFetch<T>(path: string, init: RequestInit & { retried?: 
   // Handle empty responses
   if (res.status === 204) return {} as T;
   
-  return res.json();
+  const body = await res.json().catch(() => ({}));
+  if (body?.success === false) {
+    throw new ApiError(body?.message || 'Request failed', res.status, body?.errors);
+  }
+  
+  return (body.data !== undefined ? body.data : body) as T;
 }
