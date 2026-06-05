@@ -3,28 +3,81 @@
 import { useCart } from '@/store/cart-store';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, Trash2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { apiFetch } from '@/lib/api/client';
 
-// Temporary mock data for UI testing until API is wired
-const MOCK_CATEGORIES = ['Voorgerechten', 'Hoofdgerechten', 'Desserts', 'Dranken'];
-const MOCK_ITEMS = [
-  { id: 1, name: 'Zeeuwse Oesters (6st)', price: 18.50, category: 'Voorgerechten' },
-  { id: 2, name: 'Steak Tartare', price: 14.00, category: 'Voorgerechten' },
-  { id: 3, name: 'Zeebaars', price: 26.00, category: 'Hoofdgerechten' },
-  { id: 4, name: 'Tournedos', price: 32.50, category: 'Hoofdgerechten' },
-  { id: 5, name: 'Crème Brûlée', price: 9.50, category: 'Desserts' },
-];
+type MenuItem = {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+  isAvailable: boolean;
+  isFeatured: boolean;
+  categoryName: string;
+};
 
 export default function PosTerminalPage() {
-  const [activeCategory, setActiveCategory] = useState(MOCK_CATEGORIES[0]);
+  const [items, setItems] = useState<MenuItem[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [activeCategory, setActiveCategory] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  
   const cart = useCart();
   
+  useEffect(() => {
+    async function fetchMenu() {
+      try {
+        const data = await apiFetch<MenuItem[]>('/api/menu');
+        setItems(data);
+        const uniqueCats = Array.from(new Set(data.map(i => i.categoryName)));
+        setCategories(uniqueCats);
+        if (uniqueCats.length > 0) setActiveCategory(uniqueCats[0]);
+      } catch (e) {
+        console.error('Failed to fetch menu:', e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchMenu();
+  }, []);
+
   const taxRate = 0.09; // 9% BTW for food
   const subtotal = cart.subtotal();
   const taxAmount = subtotal * taxRate;
   const total = subtotal + taxAmount;
 
-  const filteredItems = MOCK_ITEMS.filter(i => i.category === activeCategory);
+  const filteredItems = items.filter(i => i.categoryName === activeCategory);
+
+  const handleCheckout = async () => {
+    try {
+      // 1. Create order
+      const orderPayload = {
+        type: cart.type,
+        tableId: cart.tableId,
+        customerNote: cart.customerNote,
+        items: cart.lines.map(line => ({
+          menuItemId: line.menuItemId,
+          quantity: line.quantity,
+          notes: line.note
+        }))
+      };
+      
+      const order = await apiFetch<any>('/api/orders', {
+        method: 'POST',
+        body: JSON.stringify(orderPayload)
+      });
+
+      // 2. Clear cart
+      cart.clear();
+      alert(`Order ${order.orderNumber} created successfully!`);
+    } catch (e) {
+      console.error('Checkout failed', e);
+      alert('Checkout failed');
+    }
+  };
+
+  if (isLoading) return <div className="h-full flex items-center justify-center">Laden...</div>;
 
   return (
     <div className="h-full flex flex-col tablet:grid tablet:grid-cols-[1fr_380px]">
@@ -34,7 +87,7 @@ export default function PosTerminalPage() {
         {/* Category Tabs */}
         <div className="flex-none p-4 overflow-x-auto border-b border-[color:var(--border)] hide-scrollbar">
           <div className="flex gap-2">
-            {MOCK_CATEGORIES.map(cat => (
+            {categories.map(cat => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
@@ -56,8 +109,9 @@ export default function PosTerminalPage() {
             {filteredItems.map(item => (
               <button
                 key={item.id}
+                disabled={!item.isAvailable}
                 onClick={() => cart.add({ menuItemId: item.id, name: item.name, unitPriceEur: item.price })}
-                className="flex flex-col text-left bg-[color:var(--surface)] border border-[color:var(--border)] rounded-xl p-4 shadow-soft hover:shadow-lift transition-all active:scale-95 h-32 justify-between"
+                className={`flex flex-col text-left bg-[color:var(--surface)] border border-[color:var(--border)] rounded-xl p-4 shadow-soft transition-all active:scale-95 h-32 justify-between ${!item.isAvailable ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lift'}`}
               >
                 <span className="font-display font-medium text-lg text-[color:var(--ink)] leading-tight">{item.name}</span>
                 <span className="text-[color:var(--primary)] font-medium">€ {item.price.toFixed(2)}</span>
@@ -73,7 +127,9 @@ export default function PosTerminalPage() {
         {/* Cart Header */}
         <div className="flex-none p-4 border-b border-[color:var(--border)] flex justify-between items-center bg-[color:var(--bg-alt)]">
           <h2 className="font-display font-bold text-xl text-[color:var(--ink)]">Bestelling</h2>
-          <span className="text-sm font-medium bg-[color:var(--warning-bg)] text-[color:var(--warning)] px-2 py-1 rounded">Tafel 12</span>
+          <span className="text-sm font-medium bg-[color:var(--warning-bg)] text-[color:var(--warning)] px-2 py-1 rounded">
+            {cart.type === 'DINE_IN' ? (cart.tableId ? `Tafel ${cart.tableId}` : 'Kies Tafel') : cart.type}
+          </span>
         </div>
 
         {/* Cart Items */}
@@ -127,8 +183,8 @@ export default function PosTerminalPage() {
               In de Wacht
             </Button>
           </div>
-          <Button variant="accent" disabled={cart.lines.length === 0} className="w-full h-14 text-lg">
-            Afrekenen
+          <Button variant="accent" onClick={handleCheckout} disabled={cart.lines.length === 0} className="w-full h-14 text-lg">
+            Bestelling Plaatsen
           </Button>
         </div>
 
