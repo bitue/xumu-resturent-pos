@@ -20,7 +20,10 @@ public class ReportService {
 
     @Transactional(readOnly = true)
     public List<DailySalesResponse> getDailySales(LocalDateTime startDate, LocalDateTime endDate) {
-        return orderRepository.getDailySales(startDate, endDate);
+        return orderRepository.getDailySales(
+            startDate.atZone(java.time.ZoneId.systemDefault()).toInstant(),
+            endDate.atZone(java.time.ZoneId.systemDefault()).toInstant()
+        );
     }
 
     @Transactional(readOnly = true)
@@ -30,12 +33,18 @@ public class ReportService {
 
     @Transactional(readOnly = true)
     public List<com.xuma.pos.report.dto.OrderTypeAnalyticsResponse> getOrderTypeAnalytics(LocalDateTime startDate, LocalDateTime endDate) {
-        return orderRepository.getOrderTypeAnalytics(startDate, endDate);
+        return orderRepository.getOrderTypeAnalytics(
+            startDate.atZone(java.time.ZoneId.systemDefault()).toInstant(),
+            endDate.atZone(java.time.ZoneId.systemDefault()).toInstant()
+        );
     }
 
     @Transactional(readOnly = true)
     public List<com.xuma.pos.report.dto.RevenueAnalyticsResponse> getHourlyRevenue(LocalDateTime startDate, LocalDateTime endDate) {
-        List<Object[]> results = orderRepository.getHourlyRevenueNative(startDate, endDate);
+        List<Object[]> results = orderRepository.getHourlyRevenueNative(
+            startDate.atZone(java.time.ZoneId.systemDefault()).toInstant(),
+            endDate.atZone(java.time.ZoneId.systemDefault()).toInstant()
+        );
         return results.stream().map(obj -> new com.xuma.pos.report.dto.RevenueAnalyticsResponse(
                 String.valueOf(obj[0]), // timePeriod (hour)
                 ((Number) obj[1]).longValue(), // orderCount
@@ -57,7 +66,10 @@ public class ReportService {
 
     @Transactional(readOnly = true)
     public com.xuma.pos.report.dto.NewVsReturningResponse getNewVsReturningCustomers(LocalDateTime startDate, LocalDateTime endDate) {
-        List<Object[]> results = orderRepository.getNewVsReturningCustomersNative(startDate, endDate);
+        List<Object[]> results = orderRepository.getNewVsReturningCustomersNative(
+            startDate.atZone(java.time.ZoneId.systemDefault()).toInstant(),
+            endDate.atZone(java.time.ZoneId.systemDefault()).toInstant()
+        );
         if (results.isEmpty() || results.get(0)[0] == null) {
             return new com.xuma.pos.report.dto.NewVsReturningResponse(0L, 0L);
         }

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
            "AND o.status = 'PAID' " +
            "GROUP BY CAST(o.createdAt AS localdate) " +
            "ORDER BY CAST(o.createdAt AS localdate) DESC")
-    List<DailySalesResponse> getDailySales(LocalDateTime startDate, LocalDateTime endDate);
+    List<DailySalesResponse> getDailySales(Instant startDate, Instant endDate);
 
     @Query("SELECT new com.xuma.pos.report.dto.OrderTypeAnalyticsResponse(" +
            "o.type, COUNT(o), SUM(o.total)) " +
@@ -31,7 +32,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
            "WHERE o.createdAt >= :startDate AND o.createdAt <= :endDate " +
            "AND o.status = 'PAID' " +
            "GROUP BY o.type")
-    List<OrderTypeAnalyticsResponse> getOrderTypeAnalytics(LocalDateTime startDate, LocalDateTime endDate);
+    List<OrderTypeAnalyticsResponse> getOrderTypeAnalytics(Instant startDate, Instant endDate);
     
     @Query(value = "SELECT EXTRACT(HOUR FROM created_at) AS timePeriod, COUNT(*) as orderCount, SUM(total) as revenue " +
                    "FROM orders " +
@@ -39,7 +40,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                    "AND status = 'PAID' " +
                    "GROUP BY EXTRACT(HOUR FROM created_at) " +
                    "ORDER BY timePeriod", nativeQuery = true)
-    List<Object[]> getHourlyRevenueNative(LocalDateTime startDate, LocalDateTime endDate);
+    List<Object[]> getHourlyRevenueNative(Instant startDate, Instant endDate);
 
     @Query(value = "SELECT c.id as customerId, c.name as customerName, c.phone_number as phoneNumber, " +
                    "COUNT(o.id) as totalOrders, SUM(o.total) as lifetimeValue " +
@@ -63,5 +64,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
                    "FROM customer_orders co " +
                    "JOIN orders o ON o.customer_id = co.customer_id " +
                    "WHERE o.status = 'PAID' AND o.created_at >= :startDate AND o.created_at <= :endDate", nativeQuery = true)
-    List<Object[]> getNewVsReturningCustomersNative(LocalDateTime startDate, LocalDateTime endDate);
+    List<Object[]> getNewVsReturningCustomersNative(Instant startDate, Instant endDate);
 }
