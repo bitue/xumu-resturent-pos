@@ -13,6 +13,7 @@ import com.xuma.pos.auth.security.JwtService;
 import com.xuma.pos.common.exception.BusinessException;
 import com.xuma.pos.common.exception.ConflictException;
 import com.xuma.pos.common.exception.NotFoundException;
+import com.xuma.pos.common.exception.UnauthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -62,14 +63,14 @@ public class AuthService {
     @Transactional
     public TokenResponse login(LoginRequest request, String userAgent, String ip) {
         User user = userRepository.findByEmailIgnoreCase(request.getEmail())
-                .orElseThrow(() -> new BusinessException("Invalid credentials", 401));
+                .orElseThrow(() -> new UnauthorizedException("Invalid credentials"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new BusinessException("Invalid credentials", 401);
+            throw new UnauthorizedException("Invalid credentials");
         }
 
         if (!user.isEnabled()) {
-            throw new BusinessException("Account is disabled", 401);
+            throw new UnauthorizedException("Account is disabled");
         }
 
         return issueTokens(user, UUID.randomUUID(), userAgent, ip);
@@ -79,15 +80,15 @@ public class AuthService {
     public TokenResponse refresh(String presentedToken, String userAgent, String ip) {
         String hash = sha256(presentedToken);
         RefreshToken existing = refreshTokenRepository.findByTokenHash(hash)
-                .orElseThrow(() -> new BusinessException("Invalid refresh token", 401));
+                .orElseThrow(() -> new UnauthorizedException("Invalid refresh token"));
 
         if (existing.isRevoked()) {
             refreshTokenRepository.revokeFamily(existing.getFamilyId());
-            throw new BusinessException("Refresh token reuse detected. Please log in again.", 401);
+            throw new UnauthorizedException("Refresh token reuse detected. Please log in again.");
         }
 
         if (existing.getExpiresAt().isBefore(Instant.now())) {
-            throw new BusinessException("Refresh token expired", 401);
+            throw new UnauthorizedException("Refresh token expired");
         }
 
         existing.setRevoked(true);
@@ -95,7 +96,7 @@ public class AuthService {
 
         User user = existing.getUser();
         if (!user.isEnabled()) {
-            throw new BusinessException("Account is disabled", 401);
+            throw new UnauthorizedException("Account is disabled");
         }
 
         return issueTokens(user, existing.getFamilyId(), userAgent, ip);

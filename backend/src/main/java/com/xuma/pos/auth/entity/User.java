@@ -20,7 +20,7 @@ public class User extends AuditableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "citext")
     private String email;
 
     private String passwordHash;
