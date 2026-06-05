@@ -1,0 +1,246 @@
+import * as runtime from "@prisma/client/runtime/index-browser";
+export type * from '../models.js';
+export type * from './prismaNamespace.js';
+export declare const Decimal: typeof runtime.Decimal;
+export declare const NullTypes: {
+    DbNull: (new (secret: never) => typeof runtime.DbNull);
+    JsonNull: (new (secret: never) => typeof runtime.JsonNull);
+    AnyNull: (new (secret: never) => typeof runtime.AnyNull);
+};
+export declare const DbNull: import("@prisma/client-runtime-utils").DbNullClass;
+export declare const JsonNull: import("@prisma/client-runtime-utils").JsonNullClass;
+export declare const AnyNull: import("@prisma/client-runtime-utils").AnyNullClass;
+export declare const ModelName: {
+    readonly allergens: "allergens";
+    readonly categories: "categories";
+    readonly customers: "customers";
+    readonly flyway_schema_history: "flyway_schema_history";
+    readonly menu_item_allergens: "menu_item_allergens";
+    readonly menu_items: "menu_items";
+    readonly order_items: "order_items";
+    readonly orders: "orders";
+    readonly payments: "payments";
+    readonly permissions: "permissions";
+    readonly refresh_tokens: "refresh_tokens";
+    readonly reservations: "reservations";
+    readonly restaurant_tables: "restaurant_tables";
+    readonly role_permissions: "role_permissions";
+    readonly roles: "roles";
+    readonly user_roles: "user_roles";
+    readonly users: "users";
+};
+export type ModelName = (typeof ModelName)[keyof typeof ModelName];
+export declare const TransactionIsolationLevel: {
+    readonly ReadUncommitted: "ReadUncommitted";
+    readonly ReadCommitted: "ReadCommitted";
+    readonly RepeatableRead: "RepeatableRead";
+    readonly Serializable: "Serializable";
+};
+export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel];
+export declare const AllergensScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+};
+export type AllergensScalarFieldEnum = (typeof AllergensScalarFieldEnum)[keyof typeof AllergensScalarFieldEnum];
+export declare const CategoriesScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+    readonly icon: "icon";
+    readonly sort_order: "sort_order";
+    readonly active: "active";
+    readonly created_at: "created_at";
+    readonly updated_at: "updated_at";
+    readonly created_by: "created_by";
+    readonly updated_by: "updated_by";
+    readonly version: "version";
+};
+export type CategoriesScalarFieldEnum = (typeof CategoriesScalarFieldEnum)[keyof typeof CategoriesScalarFieldEnum];
+export declare const CustomersScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+    readonly phone_number: "phone_number";
+    readonly created_by: "created_by";
+    readonly created_at: "created_at";
+    readonly updated_by: "updated_by";
+    readonly updated_at: "updated_at";
+    readonly version: "version";
+};
+export type CustomersScalarFieldEnum = (typeof CustomersScalarFieldEnum)[keyof typeof CustomersScalarFieldEnum];
+export declare const Flyway_schema_historyScalarFieldEnum: {
+    readonly installed_rank: "installed_rank";
+    readonly version: "version";
+    readonly description: "description";
+    readonly type: "type";
+    readonly script: "script";
+    readonly checksum: "checksum";
+    readonly installed_by: "installed_by";
+    readonly installed_on: "installed_on";
+    readonly execution_time: "execution_time";
+    readonly success: "success";
+};
+export type Flyway_schema_historyScalarFieldEnum = (typeof Flyway_schema_historyScalarFieldEnum)[keyof typeof Flyway_schema_historyScalarFieldEnum];
+export declare const Menu_item_allergensScalarFieldEnum: {
+    readonly menu_item_id: "menu_item_id";
+    readonly allergen_id: "allergen_id";
+};
+export type Menu_item_allergensScalarFieldEnum = (typeof Menu_item_allergensScalarFieldEnum)[keyof typeof Menu_item_allergensScalarFieldEnum];
+export declare const Menu_itemsScalarFieldEnum: {
+    readonly id: "id";
+    readonly category_id: "category_id";
+    readonly name: "name";
+    readonly description: "description";
+    readonly price: "price";
+    readonly image_url: "image_url";
+    readonly available: "available";
+    readonly featured: "featured";
+    readonly prep_time_minutes: "prep_time_minutes";
+    readonly calories: "calories";
+    readonly deleted_at: "deleted_at";
+    readonly created_at: "created_at";
+    readonly updated_at: "updated_at";
+    readonly created_by: "created_by";
+    readonly updated_by: "updated_by";
+    readonly version: "version";
+};
+export type Menu_itemsScalarFieldEnum = (typeof Menu_itemsScalarFieldEnum)[keyof typeof Menu_itemsScalarFieldEnum];
+export declare const Order_itemsScalarFieldEnum: {
+    readonly id: "id";
+    readonly order_id: "order_id";
+    readonly menu_item_id: "menu_item_id";
+    readonly quantity: "quantity";
+    readonly unit_price: "unit_price";
+    readonly special_request: "special_request";
+    readonly status: "status";
+    readonly created_at: "created_at";
+    readonly updated_at: "updated_at";
+};
+export type Order_itemsScalarFieldEnum = (typeof Order_itemsScalarFieldEnum)[keyof typeof Order_itemsScalarFieldEnum];
+export declare const OrdersScalarFieldEnum: {
+    readonly id: "id";
+    readonly order_number: "order_number";
+    readonly type: "type";
+    readonly status: "status";
+    readonly subtotal: "subtotal";
+    readonly tax: "tax";
+    readonly discount: "discount";
+    readonly total: "total";
+    readonly customer_note: "customer_note";
+    readonly table_id: "table_id";
+    readonly assigned_waiter_id: "assigned_waiter_id";
+    readonly customer_id: "customer_id";
+    readonly idempotency_key: "idempotency_key";
+    readonly deleted_at: "deleted_at";
+    readonly created_at: "created_at";
+    readonly updated_at: "updated_at";
+    readonly created_by: "created_by";
+    readonly updated_by: "updated_by";
+    readonly version: "version";
+};
+export type OrdersScalarFieldEnum = (typeof OrdersScalarFieldEnum)[keyof typeof OrdersScalarFieldEnum];
+export declare const PaymentsScalarFieldEnum: {
+    readonly id: "id";
+    readonly order_id: "order_id";
+    readonly amount: "amount";
+    readonly payment_method: "payment_method";
+    readonly status: "status";
+    readonly transaction_id: "transaction_id";
+    readonly created_by: "created_by";
+    readonly created_at: "created_at";
+    readonly updated_by: "updated_by";
+    readonly updated_at: "updated_at";
+    readonly version: "version";
+};
+export type PaymentsScalarFieldEnum = (typeof PaymentsScalarFieldEnum)[keyof typeof PaymentsScalarFieldEnum];
+export declare const PermissionsScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+    readonly description: "description";
+};
+export type PermissionsScalarFieldEnum = (typeof PermissionsScalarFieldEnum)[keyof typeof PermissionsScalarFieldEnum];
+export declare const Refresh_tokensScalarFieldEnum: {
+    readonly id: "id";
+    readonly token_hash: "token_hash";
+    readonly user_id: "user_id";
+    readonly family_id: "family_id";
+    readonly issued_at: "issued_at";
+    readonly expires_at: "expires_at";
+    readonly revoked: "revoked";
+    readonly user_agent: "user_agent";
+    readonly ip: "ip";
+};
+export type Refresh_tokensScalarFieldEnum = (typeof Refresh_tokensScalarFieldEnum)[keyof typeof Refresh_tokensScalarFieldEnum];
+export declare const ReservationsScalarFieldEnum: {
+    readonly id: "id";
+    readonly customer_name: "customer_name";
+    readonly customer_phone: "customer_phone";
+    readonly table_id: "table_id";
+    readonly reservation_time: "reservation_time";
+    readonly party_size: "party_size";
+    readonly status: "status";
+    readonly special_requests: "special_requests";
+    readonly created_by: "created_by";
+    readonly created_at: "created_at";
+    readonly updated_by: "updated_by";
+    readonly updated_at: "updated_at";
+    readonly version: "version";
+};
+export type ReservationsScalarFieldEnum = (typeof ReservationsScalarFieldEnum)[keyof typeof ReservationsScalarFieldEnum];
+export declare const Restaurant_tablesScalarFieldEnum: {
+    readonly id: "id";
+    readonly table_number: "table_number";
+    readonly capacity: "capacity";
+    readonly status: "status";
+    readonly created_by: "created_by";
+    readonly created_at: "created_at";
+    readonly updated_by: "updated_by";
+    readonly updated_at: "updated_at";
+    readonly version: "version";
+};
+export type Restaurant_tablesScalarFieldEnum = (typeof Restaurant_tablesScalarFieldEnum)[keyof typeof Restaurant_tablesScalarFieldEnum];
+export declare const Role_permissionsScalarFieldEnum: {
+    readonly role_id: "role_id";
+    readonly permission_id: "permission_id";
+};
+export type Role_permissionsScalarFieldEnum = (typeof Role_permissionsScalarFieldEnum)[keyof typeof Role_permissionsScalarFieldEnum];
+export declare const RolesScalarFieldEnum: {
+    readonly id: "id";
+    readonly name: "name";
+    readonly description: "description";
+};
+export type RolesScalarFieldEnum = (typeof RolesScalarFieldEnum)[keyof typeof RolesScalarFieldEnum];
+export declare const User_rolesScalarFieldEnum: {
+    readonly user_id: "user_id";
+    readonly role_id: "role_id";
+};
+export type User_rolesScalarFieldEnum = (typeof User_rolesScalarFieldEnum)[keyof typeof User_rolesScalarFieldEnum];
+export declare const UsersScalarFieldEnum: {
+    readonly id: "id";
+    readonly email: "email";
+    readonly password_hash: "password_hash";
+    readonly full_name: "full_name";
+    readonly phone: "phone";
+    readonly enabled: "enabled";
+    readonly provider: "provider";
+    readonly provider_id: "provider_id";
+    readonly created_at: "created_at";
+    readonly updated_at: "updated_at";
+    readonly created_by: "created_by";
+    readonly updated_by: "updated_by";
+    readonly version: "version";
+};
+export type UsersScalarFieldEnum = (typeof UsersScalarFieldEnum)[keyof typeof UsersScalarFieldEnum];
+export declare const SortOrder: {
+    readonly asc: "asc";
+    readonly desc: "desc";
+};
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
+export declare const QueryMode: {
+    readonly default: "default";
+    readonly insensitive: "insensitive";
+};
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode];
+export declare const NullsOrder: {
+    readonly first: "first";
+    readonly last: "last";
+};
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder];

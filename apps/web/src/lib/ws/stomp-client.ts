@@ -10,7 +10,7 @@ export class StompService {
   connect(token: string): Promise<void> {
     return new Promise((resolve, reject) => {
       this.client = new Client({
-        webSocketFactory: () => new SockJS(`${process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:8080'}/ws`),
+        webSocketFactory: () => new SockJS(`${process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:5001'}/ws`),
         connectHeaders: { Authorization: `Bearer ${token}` },
         reconnectDelay: 2000,
         heartbeatIncoming: 4000,

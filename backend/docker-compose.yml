@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: xuma_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: xuma
+      POSTGRES_PASSWORD: xuma
+      POSTGRES_DB: xuma
+    ports:
+      - '5433:5432'
+    volumes:
+      - xuma_pgdata:/var/lib/postgresql/data
+
+volumes:
+  xuma_pgdata:
