@@ -3,9 +3,9 @@ import { jwtVerify } from 'jose';
 
 const PUBLIC = ['/', '/menu', '/reserve', '/login', '/register', '/oauth'];
 const ROLE_GATES: Array<{ prefix: string; perm: string }> = [
-  { prefix: '/admin', perm: 'SYSTEM_CONFIG' },
-  { prefix: '/pos',   perm: 'ORDER_CREATE' },
-  { prefix: '/kds',   perm: 'ORDER_UPDATE_STATUS' },
+  { prefix: '/admin', perm: 'system:config' },
+  { prefix: '/pos',   perm: 'order:create' },
+  { prefix: '/kds',   perm: 'order:update_status' },
 ];
 
 export async function middleware(req: NextRequest) {
@@ -19,7 +19,7 @@ export async function middleware(req: NextRequest) {
   }
 
   try {
-    const secret = process.env.JWT_SECRET || 'fallback-secret-for-dev';
+    const secret = process.env.JWT_SECRET || 'super-secret-key-that-must-be-at-least-32-chars-long-for-hs256-signature';
     const { payload } = await jwtVerify(token, new TextEncoder().encode(secret));
     
     // Using string[] for permissions for simplicity, but adjust based on your payload format

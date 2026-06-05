@@ -31,6 +31,12 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error("Validation failed", errors));
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleAccessDeniedException(org.springframework.security.access.AccessDeniedException ex) {
+        return ResponseEntity.status(403)
+                .body(ApiResponse.error("Access Denied"));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleException(Exception ex) {
         log.error("Unhandled exception: ", ex);

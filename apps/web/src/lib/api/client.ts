@@ -21,7 +21,7 @@ export async function apiFetch<T>(path: string, init: RequestInit & { retried?: 
     credentials: 'include',
     headers: { 'Content-Type': 'application/json', ...init.headers },
   });
-  if (res.status === 401 && !init.retried) {
+  if (res.status === 401 && !init.retried && !path.includes('/api/auth/login')) {
     await refresh();
     return apiFetch<T>(path, { ...init, retried: true });
   }

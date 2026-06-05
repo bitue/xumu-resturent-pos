@@ -26,12 +26,13 @@ export default function LoginPage() {
 
   async function onSubmit(values: FormValues) {
     try {
-      const res = await apiFetch<{ accessToken: string; user: User }>('/api/auth/login', {
+      await apiFetch<{ accessToken: string }>('/api/auth/login', {
         method: 'POST', 
         body: JSON.stringify(values),
       });
-      // Assuming backend sets HttpOnly cookie for session, just route
-      router.push(roleHome(res.user));
+      // Fetch the user profile since login doesn't return the user object directly
+      const user = await apiFetch<User>('/api/auth/me');
+      router.push(roleHome(user));
     } catch (error: any) {
       setError('root', { message: error.message || 'Login mislukt. Controleer uw gegevens.' });
     }

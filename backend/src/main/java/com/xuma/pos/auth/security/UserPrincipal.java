@@ -24,16 +24,26 @@ public class UserPrincipal implements UserDetails {
     }
 
     public static UserPrincipal from(User user) {
-        var authorities = user.permissionNames().stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toUnmodifiableSet());
+        java.util.Set<SimpleGrantedAuthority> authorities = new java.util.HashSet<>();
+        
+        // Add roles with ROLE_ prefix
+        user.getRoles().forEach(role -> 
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()))
+        );
+        
+        // Add permissions as authorities
+        user.permissionNames().forEach(perm -> 
+            authorities.add(new SimpleGrantedAuthority(perm))
+        );
+        
+        var unmodifiableAuthorities = java.util.Collections.unmodifiableSet(authorities);
 
         return new UserPrincipal(
                 user.getId(),
                 user.getEmail(),
                 user.getPasswordHash(),
                 user.isEnabled(),
-                authorities
+                unmodifiableAuthorities
         );
     }
 

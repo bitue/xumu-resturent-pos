@@ -27,6 +27,7 @@ E:\xumu\backend\src\main\java\com\xuma\pos\auth\service\UserService.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\api\ApiResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\api\ErrorResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\api\PageResponse.java
+E:\xumu\backend\src\main\java\com\xuma\pos\common\config\CorsConfig.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\config\WebSocketConfig.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\entity\AuditableEntity.java
 E:\xumu\backend\src\main\java\com\xuma\pos\common\entity\SoftDeletableEntity.java
@@ -95,12 +96,19 @@ E:\xumu\backend\src\main\java\com\xuma\pos\report\dto\OrderTypeAnalyticsResponse
 E:\xumu\backend\src\main\java\com\xuma\pos\report\dto\RevenueAnalyticsResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\report\dto\TopItemResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\report\service\ReportService.java
+E:\xumu\backend\src\main\java\com\xuma\pos\table\controller\ReservationController.java
 E:\xumu\backend\src\main\java\com\xuma\pos\table\controller\TableController.java
 E:\xumu\backend\src\main\java\com\xuma\pos\table\dto\CreateTableRequest.java
+E:\xumu\backend\src\main\java\com\xuma\pos\table\dto\ReservationRequest.java
+E:\xumu\backend\src\main\java\com\xuma\pos\table\dto\ReservationResponse.java
 E:\xumu\backend\src\main\java\com\xuma\pos\table\dto\TableResponse.java
+E:\xumu\backend\src\main\java\com\xuma\pos\table\entity\Reservation.java
+E:\xumu\backend\src\main\java\com\xuma\pos\table\entity\ReservationStatus.java
 E:\xumu\backend\src\main\java\com\xuma\pos\table\entity\RestaurantTable.java
 E:\xumu\backend\src\main\java\com\xuma\pos\table\entity\TableStatus.java
 E:\xumu\backend\src\main\java\com\xuma\pos\table\mapper\TableMapper.java
+E:\xumu\backend\src\main\java\com\xuma\pos\table\repository\ReservationRepository.java
 E:\xumu\backend\src\main\java\com\xuma\pos\table\repository\RestaurantTableRepository.java
+E:\xumu\backend\src\main\java\com\xuma\pos\table\service\ReservationService.java
 E:\xumu\backend\src\main\java\com\xuma\pos\table\service\TableService.java
 E:\xumu\backend\src\main\java\com\xuma\pos\XumaPosApplication.java
