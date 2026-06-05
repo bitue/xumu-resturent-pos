@@ -8,9 +8,9 @@ import java.util.Set;
 
 public final class OrderStateMachine {
     private static final Map<OrderStatus, Set<OrderStatus>> ALLOWED = Map.of(
-        OrderStatus.PENDING,    Set.of(OrderStatus.PREPARING, OrderStatus.CANCELLED),
-        OrderStatus.PREPARING,  Set.of(OrderStatus.READY, OrderStatus.CANCELLED),
-        OrderStatus.READY,      Set.of(OrderStatus.SERVED),
+        OrderStatus.PENDING,    Set.of(OrderStatus.PREPARING, OrderStatus.PAID, OrderStatus.CANCELLED),
+        OrderStatus.PREPARING,  Set.of(OrderStatus.READY, OrderStatus.PAID, OrderStatus.CANCELLED),
+        OrderStatus.READY,      Set.of(OrderStatus.SERVED, OrderStatus.PAID),
         OrderStatus.SERVED,     Set.of(OrderStatus.PAID),
         OrderStatus.PAID,       Set.of(),
         OrderStatus.CANCELLED,  Set.of()

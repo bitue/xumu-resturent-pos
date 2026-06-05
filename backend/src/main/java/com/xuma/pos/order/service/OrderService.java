@@ -9,6 +9,8 @@ import com.xuma.pos.order.entity.Order;
 import com.xuma.pos.order.entity.OrderStatus;
 import com.xuma.pos.order.mapper.OrderMapper;
 import com.xuma.pos.order.repository.OrderRepository;
+import com.xuma.pos.table.entity.TableStatus;
+import com.xuma.pos.table.service.TableService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,7 @@ public class OrderService {
     private final MenuItemRepository menuItemRepository;
     private final OrderMapper orderMapper;
     private final SimpMessagingTemplate messagingTemplate;
+    private final TableService tableService;
 
     @Transactional
     public OrderResponse createOrder(CreateOrderRequest request, Long waiterId) {
@@ -60,6 +63,10 @@ public class OrderService {
 
         order = orderRepository.save(order);
         
+        if (order.getTableId() != null) {
+            tableService.updateTableStatus(order.getTableId(), TableStatus.OCCUPIED);
+        }
+
         OrderResponse response = orderMapper.toResponse(order);
         broadcastOrderUpdate(response);
         return response;
@@ -72,6 +79,10 @@ public class OrderService {
             
         order.transitionTo(nextStatus);
         order = orderRepository.save(order);
+        
+        if (order.getTableId() != null && (nextStatus == OrderStatus.PAID || nextStatus == OrderStatus.CANCELLED)) {
+            tableService.updateTableStatus(order.getTableId(), TableStatus.AVAILABLE);
+        }
         
         OrderResponse response = orderMapper.toResponse(order);
         broadcastOrderUpdate(response);
