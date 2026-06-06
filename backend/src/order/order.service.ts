@@ -118,6 +118,44 @@ export class OrderService {
     return { success: true, data: this.mapOrder(order) };
   }
 
+  async updateOrderItemStatusById(itemId: number, status: string, username: string) {
+    await this.prisma.order_items.update({
+      where: { id: itemId },
+      data: { status, updated_at: new Date() },
+    });
+    return { success: true };
+  }
+
+  async getActiveKdsItems() {
+    const items = await this.prisma.order_items.findMany({
+      where: {
+        status: { in: ['PENDING', 'PREPARING', 'READY'] },
+        orders: {
+          status: { notIn: ['COMPLETED', 'CANCELLED'] }
+        }
+      },
+      include: {
+        orders: true,
+        menu_items: true
+      },
+      orderBy: { created_at: 'asc' }
+    });
+
+    return {
+      success: true,
+      data: items.map(item => ({
+        id: Number(item.id),
+        orderNumber: item.orders.order_number,
+        status: item.status,
+        orderedAt: item.created_at.toISOString(),
+        menuItemName: item.menu_items?.name_nl || item.menu_items?.name_en,
+        quantity: item.quantity,
+        specialRequest: item.special_request,
+        tableId: item.orders.table_id ? Number(item.orders.table_id) : 0
+      }))
+    };
+  }
+
   private mapOrder(o: any) {
     return {
       id: Number(o.id),
@@ -137,7 +175,7 @@ export class OrderService {
       items: o.order_items?.map((i: any) => ({
         id: Number(i.id),
         menuItemId: Number(i.menu_item_id),
-        menuItemName: i.menu_items?.name,
+        menuItemName: i.menu_items?.name_nl || i.menu_items?.name_en,
         quantity: i.quantity,
         unitPrice: Number(i.unit_price),
         specialRequest: i.special_request,

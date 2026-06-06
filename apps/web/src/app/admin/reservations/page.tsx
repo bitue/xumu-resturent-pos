@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { apiFetch } from '@/lib/api/client';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils/cn';
+import { useTranslation } from '@/lib/i18n/use-translation';
 
 type ReservationStatus = 'PENDING' | 'CONFIRMED' | 'SEATED' | 'CANCELLED' | 'NO_SHOW';
 
@@ -20,6 +21,7 @@ type Reservation = {
 };
 
 export default function ReservationsPage() {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [reservations, setReservations] = useState<Reservation[]>([]);
 
@@ -30,7 +32,7 @@ export default function ReservationsPage() {
   async function loadReservations() {
     try {
       setLoading(true);
-      const res = await apiFetch<Reservation[]>('/api/reservations');
+      const res = await apiFetch<Reservation[]>('/api/tables/reservations/all');
       setReservations(res);
     } catch (err) {
       console.error(err);
@@ -41,7 +43,10 @@ export default function ReservationsPage() {
 
   async function updateStatus(id: number, status: ReservationStatus) {
     try {
-      await apiFetch(`/api/reservations/${id}/status?status=${status}`, { method: 'PATCH' });
+      await apiFetch(`/api/tables/reservations/${id}/status`, { 
+        method: 'PUT',
+        body: JSON.stringify({ status })
+      });
       loadReservations();
     } catch (err) {
       console.error(err);
@@ -62,7 +67,7 @@ export default function ReservationsPage() {
   if (loading) {
     return (
       <div className="p-8 space-y-6">
-        <h1 className="text-3xl font-display font-bold">Reserveringen</h1>
+        <h1 className="text-3xl font-display font-bold">{t('reservations_table.title')}</h1>
         <div className="h-[400px] bg-black/5 animate-pulse rounded-2xl"></div>
       </div>
     );
@@ -72,11 +77,11 @@ export default function ReservationsPage() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 space-y-8 max-w-7xl mx-auto">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-display font-bold text-[color:var(--primary)] mb-2">Reserveringen</h1>
-          <p className="text-[color:var(--text-muted)]">Beheer tafel reserveringen voor vandaag</p>
+          <h1 className="text-3xl font-display font-bold text-[color:var(--primary)] mb-2">{t('reservations_table.title')}</h1>
+          <p className="text-[color:var(--text-muted)]">{t('reservations_table.description')}</p>
         </div>
         <button className="bg-[color:var(--primary)] text-white px-6 py-3 rounded-xl font-medium hover:bg-[color:var(--delft-900)] transition-colors shadow-soft">
-          + Nieuwe Reservering
+          + {t('reservations_table.title')}
         </button>
       </div>
 
@@ -85,12 +90,12 @@ export default function ReservationsPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-black/5 text-sm text-[color:var(--text-muted)] border-b border-[color:var(--border)]">
-                <th className="py-4 px-6 font-medium">Tijd</th>
-                <th className="py-4 px-6 font-medium">Klant</th>
-                <th className="py-4 px-6 font-medium">Personen</th>
-                <th className="py-4 px-6 font-medium">Tafel</th>
-                <th className="py-4 px-6 font-medium">Status</th>
-                <th className="py-4 px-6 font-medium text-right">Acties</th>
+                <th className="py-4 px-6 font-medium">{t('reservations_table.time')}</th>
+                <th className="py-4 px-6 font-medium">{t('reservations_table.customerName')}</th>
+                <th className="py-4 px-6 font-medium">{t('reservations_table.partySize')}</th>
+                <th className="py-4 px-6 font-medium">{t('reservations_table.table')}</th>
+                <th className="py-4 px-6 font-medium">{t('reservations_table.status')}</th>
+                <th className="py-4 px-6 font-medium text-right">{t('reservations_table.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -109,27 +114,27 @@ export default function ReservationsPage() {
                     </span>
                   </td>
                   <td className="py-4 px-6 text-[color:var(--text-muted)]">
-                    {r.tableNumber || 'Geen tafel toegewezen'}
+                    {r.tableNumber || '-'}
                   </td>
                   <td className="py-4 px-6">
                     <span className={cn('px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider', getStatusColor(r.status))}>
-                      {r.status}
+                      {t(`reservations_table.statusLabels.${r.status.toLowerCase()}`)}
                     </span>
                   </td>
                   <td className="py-4 px-6 text-right space-x-2">
                     {r.status === 'PENDING' && (
                       <button onClick={() => updateStatus(r.id, 'CONFIRMED')} className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                        Bevestigen
+                        {t('reservations_table.statusLabels.confirmed')}
                       </button>
                     )}
                     {r.status === 'CONFIRMED' && (
                       <button onClick={() => updateStatus(r.id, 'SEATED')} className="text-green-600 hover:text-green-800 text-sm font-medium">
-                        Zitten
+                        {t('reservations_table.statusLabels.seated')}
                       </button>
                     )}
                     {(r.status === 'PENDING' || r.status === 'CONFIRMED') && (
                       <button onClick={() => updateStatus(r.id, 'CANCELLED')} className="text-red-600 hover:text-red-800 text-sm font-medium">
-                        Annuleren
+                        {t('reservations_table.statusLabels.cancelled')}
                       </button>
                     )}
                   </td>
@@ -138,7 +143,7 @@ export default function ReservationsPage() {
               {reservations.length === 0 && (
                 <tr>
                   <td colSpan={6} className="py-12 text-center text-[color:var(--text-muted)]">
-                    Geen reserveringen voor vandaag
+                    -
                   </td>
                 </tr>
               )}

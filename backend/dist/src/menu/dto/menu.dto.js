@@ -12,16 +12,22 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateMenuItemDto = exports.CreateCategoryDto = void 0;
 const class_validator_1 = require("class-validator");
 class CreateCategoryDto {
-    name;
+    nameNl;
+    nameEn;
     icon;
     sortOrder;
 }
 exports.CreateCategoryDto = CreateCategoryDto;
 __decorate([
-    (0, class_validator_1.IsNotEmpty)({ message: 'Name is required' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Dutch name is required' }),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateCategoryDto.prototype, "name", void 0);
+], CreateCategoryDto.prototype, "nameNl", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: 'English name is required' }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateCategoryDto.prototype, "nameEn", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
@@ -34,8 +40,10 @@ __decorate([
 ], CreateCategoryDto.prototype, "sortOrder", void 0);
 class CreateMenuItemDto {
     categoryId;
-    name;
-    description;
+    nameNl;
+    nameEn;
+    descriptionNl;
+    descriptionEn;
     price;
     imageUrl;
     prepTimeMinutes;
@@ -51,15 +59,25 @@ __decorate([
     __metadata("design:type", Number)
 ], CreateMenuItemDto.prototype, "categoryId", void 0);
 __decorate([
-    (0, class_validator_1.IsNotEmpty)({ message: 'Name is required' }),
+    (0, class_validator_1.IsNotEmpty)({ message: 'Dutch name is required' }),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateMenuItemDto.prototype, "name", void 0);
+], CreateMenuItemDto.prototype, "nameNl", void 0);
+__decorate([
+    (0, class_validator_1.IsNotEmpty)({ message: 'English name is required' }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateMenuItemDto.prototype, "nameEn", void 0);
 __decorate([
     (0, class_validator_1.IsOptional)(),
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], CreateMenuItemDto.prototype, "description", void 0);
+], CreateMenuItemDto.prototype, "descriptionNl", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateMenuItemDto.prototype, "descriptionEn", void 0);
 __decorate([
     (0, class_validator_1.IsNotEmpty)({ message: 'Price is required' }),
     (0, class_validator_1.IsNumber)(),

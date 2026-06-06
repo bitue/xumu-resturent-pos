@@ -710,8 +710,10 @@ components:
         - type: object
           properties:
             id: { type: integer }
-            name: { type: string }
-            description: { type: string }
+            nameNl: { type: string }
+            nameEn: { type: string }
+            descriptionNl: { type: string }
+            descriptionEn: { type: string }
             price: { type: number, format: double }
             imageUrl: { type: string }
             available: { type: boolean }
@@ -719,6 +721,8 @@ components:
             prepTimeMinutes: { type: integer }
             calories: { type: integer }
             categoryId: { type: integer }
+            categoryNameNl: { type: string }
+            categoryNameEn: { type: string }
             allergens:
               type: array
               items:
@@ -730,7 +734,8 @@ components:
         - type: object
           properties:
             id: { type: integer }
-            name: { type: string }
+            nameNl: { type: string }
+            nameEn: { type: string }
             icon: { type: string }
             sortOrder: { type: integer }
             active: { type: boolean }
@@ -741,10 +746,12 @@ components:
 
     CreateMenuItemRequest:
       type: object
-      required: [name, price, categoryId]
+      required: [nameNl, nameEn, price, categoryId]
       properties:
-        name: { type: string }
-        description: { type: string }
+        nameNl: { type: string }
+        nameEn: { type: string }
+        descriptionNl: { type: string }
+        descriptionEn: { type: string }
         price: { type: number, format: double }
         categoryId: { type: integer }
         imageUrl: { type: string }

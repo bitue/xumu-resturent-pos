@@ -23,12 +23,12 @@ export class ReportService {
 
   async getTopSellingItems(limit: number = 10) {
     const result = await this.prisma.$queryRaw`
-      SELECT m.id, m.name, COUNT(oi.id) as "quantitySold", COALESCE(SUM(oi.quantity * oi.unit_price), 0) as "revenue"
+      SELECT m.id, m.name_nl as "menuItemNameNl", m.name_en as "menuItemNameEn", COUNT(oi.id) as "quantitySold", COALESCE(SUM(oi.quantity * oi.unit_price), 0) as "revenue"
       FROM menu_items m
       JOIN order_items oi ON m.id = oi.menu_item_id
       JOIN orders o ON o.id = oi.order_id
       WHERE o.status = 'PAID'
-      GROUP BY m.id, m.name
+      GROUP BY m.id, m.name_nl, m.name_en
       ORDER BY "quantitySold" DESC
       LIMIT ${Number(limit)}
     `;

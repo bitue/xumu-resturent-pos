@@ -5,19 +5,24 @@ import { Button } from '@/components/ui/button';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { apiFetch } from '@/lib/api/client';
+import { useTranslation } from '@/lib/i18n/use-translation';
 
 type MenuItem = {
   id: number;
-  name: string;
-  description: string;
+  nameNl: string;
+  nameEn: string;
+  descriptionNl: string;
+  descriptionEn: string;
   price: number;
   imageUrl: string;
   isAvailable: boolean;
   isFeatured: boolean;
-  categoryName: string;
+  categoryNameNl: string;
+  categoryNameEn: string;
 };
 
 export default function PosTerminalPage() {
+  const { t, lang } = useTranslation();
   const [items, setItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [activeCategory, setActiveCategory] = useState('');
@@ -28,11 +33,11 @@ export default function PosTerminalPage() {
   useEffect(() => {
     async function fetchMenu() {
       try {
-        const data = await apiFetch<MenuItem[]>('/api/menu');
+        const data = await apiFetch<MenuItem[]>('/api/menu/items');
         setItems(data);
-        const uniqueCats = Array.from(new Set(data.map(i => i.categoryName)));
+        const uniqueCats = Array.from(new Set(data.map(i => (lang === 'en' && i.categoryNameEn ? i.categoryNameEn : i.categoryNameNl) || '')));
         setCategories(uniqueCats);
-        if (uniqueCats.length > 0) setActiveCategory(uniqueCats[0]);
+        if (uniqueCats.length > 0) setActiveCategory(uniqueCats[0] || '');
       } catch (e) {
         console.error('Failed to fetch menu:', e);
       } finally {
@@ -40,14 +45,17 @@ export default function PosTerminalPage() {
       }
     }
     fetchMenu();
-  }, []);
+  }, [lang]);
 
   const taxRate = 0.09; // 9% BTW for food
   const subtotal = cart.subtotal();
   const taxAmount = subtotal * taxRate;
   const total = subtotal + taxAmount;
 
-  const filteredItems = items.filter(i => i.categoryName === activeCategory);
+  const filteredItems = items.filter(i => {
+    const catName = lang === 'en' && i.categoryNameEn ? i.categoryNameEn : i.categoryNameNl;
+    return catName === activeCategory;
+  });
 
   const handleCheckout = async () => {
     try {
@@ -87,7 +95,7 @@ export default function PosTerminalPage() {
     }
   };
 
-  if (isLoading) return <div className="h-full flex items-center justify-center">Laden...</div>;
+  if (isLoading) return <div className="h-full flex items-center justify-center">{t('common.loading')}</div>;
 
   return (
     <div className="h-full flex flex-col tablet:grid tablet:grid-cols-[1fr_380px]">
@@ -116,17 +124,19 @@ export default function PosTerminalPage() {
         {/* Menu Items Grid */}
         <div className="flex-1 overflow-y-auto p-4">
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredItems.map(item => (
+            {filteredItems.map(item => {
+              const itemName = lang === 'en' && item.nameEn ? item.nameEn : item.nameNl;
+              return (
               <button
                 key={item.id}
                 disabled={!item.isAvailable}
-                onClick={() => cart.add({ menuItemId: item.id, name: item.name, unitPriceEur: item.price })}
+                onClick={() => cart.add({ menuItemId: item.id, name: itemName, unitPriceEur: item.price })}
                 className={`flex flex-col text-left bg-[color:var(--surface)] border border-[color:var(--border)] rounded-xl p-4 shadow-soft transition-all active:scale-95 h-32 justify-between ${!item.isAvailable ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lift'}`}
               >
-                <span className="font-display font-medium text-lg text-[color:var(--ink)] leading-tight">{item.name}</span>
+                <span className="font-display font-medium text-lg text-[color:var(--ink)] leading-tight">{itemName}</span>
                 <span className="text-[color:var(--primary)] font-medium">€ {item.price.toFixed(2)}</span>
               </button>
-            ))}
+            )})}
           </div>
         </div>
       </div>
@@ -136,9 +146,9 @@ export default function PosTerminalPage() {
         
         {/* Cart Header */}
         <div className="flex-none p-4 border-b border-[color:var(--border)] flex justify-between items-center bg-[color:var(--bg-alt)]">
-          <h2 className="font-display font-bold text-xl text-[color:var(--ink)]">Bestelling</h2>
+          <h2 className="font-display font-bold text-xl text-[color:var(--ink)]">{t('pos.order')}</h2>
           <span className="text-sm font-medium bg-[color:var(--warning-bg)] text-[color:var(--warning)] px-2 py-1 rounded">
-            {cart.type === 'DINE_IN' ? (cart.tableId ? `Tafel ${cart.tableId}` : 'Kies Tafel') : cart.type}
+            {cart.type === 'DINE_IN' ? (cart.tableId ? `${t('reservations_table.table')} ${cart.tableId}` : t('pos.chooseTable')) : cart.type}
           </span>
         </div>
 
@@ -146,7 +156,7 @@ export default function PosTerminalPage() {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {cart.lines.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-[color:var(--text-muted)] italic text-sm">
-              <p>Geen items in bestelling</p>
+              <p>{t('pos.emptyCart')}</p>
             </div>
           ) : (
             cart.lines.map((line) => (
@@ -172,29 +182,29 @@ export default function PosTerminalPage() {
         <div className="flex-none p-4 border-t border-[color:var(--border)] bg-[color:var(--bg-alt)]">
           <div className="space-y-2 mb-4 text-sm">
             <div className="flex justify-between text-[color:var(--text-muted)]">
-              <span>Subtotaal</span>
+              <span>{t('pos.subtotal')}</span>
               <span>€ {subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-[color:var(--text-muted)]">
-              <span>BTW (9%)</span>
+              <span>{t('pos.tax')}</span>
               <span>€ {taxAmount.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-[color:var(--ink)] font-bold text-lg pt-2 border-t border-[color:var(--border)]">
-              <span>Totaal</span>
+              <span>{t('pos.total')}</span>
               <span>€ {total.toFixed(2)}</span>
             </div>
           </div>
           
           <div className="grid grid-cols-2 gap-3 mb-3">
             <Button variant="secondary" onClick={() => cart.clear()} disabled={cart.lines.length === 0} className="w-full">
-              Annuleren
+              {t('common.cancel')}
             </Button>
             <Button variant="secondary" disabled={cart.lines.length === 0} className="w-full text-[color:var(--info)] border-[color:var(--info)]">
-              In de Wacht
+              {t('pos.hold')}
             </Button>
           </div>
           <Button variant="accent" onClick={handleCheckout} disabled={cart.lines.length === 0} className="w-full h-14 text-lg">
-            Bestelling Plaatsen
+            {t('pos.placeOrder')}
           </Button>
         </div>
 

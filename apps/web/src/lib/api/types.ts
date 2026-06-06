@@ -1,6 +1,6 @@
-import type { paths, components } from './openapi';
+import type { paths, components } from './schema';
 
-export type User       = components['schemas']['UserResponse'];
-export type Order      = components['schemas']['OrderResponse'];
-export type MenuItem   = components['schemas']['MenuItemResponse'];
+export type User       = components['schemas']['User'];
+export type Order      = components['schemas']['Order'];
+export type MenuItem   = components['schemas']['MenuItem'];
 // Add additional types below as needed once schema is fully generated

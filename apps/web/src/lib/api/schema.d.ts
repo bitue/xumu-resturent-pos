@@ -551,8 +551,10 @@ export interface components {
         };
         MenuItem: components["schemas"]["Auditable"] & {
             id?: number;
-            name?: string;
-            description?: string;
+            nameNl?: string;
+            nameEn?: string;
+            descriptionNl?: string;
+            descriptionEn?: string;
             /** Format: double */
             price?: number;
             imageUrl?: string;
@@ -561,19 +563,24 @@ export interface components {
             prepTimeMinutes?: number;
             calories?: number;
             categoryId?: number;
+            categoryNameNl?: string;
+            categoryNameEn?: string;
             allergens?: components["schemas"]["Allergen"][];
         };
         Category: components["schemas"]["Auditable"] & {
             id?: number;
-            name?: string;
+            nameNl?: string;
+            nameEn?: string;
             icon?: string;
             sortOrder?: number;
             active?: boolean;
             items?: components["schemas"]["MenuItem"][];
         };
         CreateMenuItemRequest: {
-            name: string;
-            description?: string;
+            nameNl: string;
+            nameEn: string;
+            descriptionNl?: string;
+            descriptionEn?: string;
             /** Format: double */
             price: number;
             categoryId: number;

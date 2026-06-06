@@ -1,9 +1,13 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString, IsBoolean, IsArray, Min } from 'class-validator';
 
 export class CreateCategoryDto {
-  @IsNotEmpty({ message: 'Name is required' })
+  @IsNotEmpty({ message: 'Dutch name is required' })
   @IsString()
-  name: string;
+  nameNl: string;
+
+  @IsNotEmpty({ message: 'English name is required' })
+  @IsString()
+  nameEn: string;
 
   @IsOptional()
   @IsString()
@@ -19,13 +23,21 @@ export class CreateMenuItemDto {
   @IsNumber()
   categoryId: number;
 
-  @IsNotEmpty({ message: 'Name is required' })
+  @IsNotEmpty({ message: 'Dutch name is required' })
   @IsString()
-  name: string;
+  nameNl: string;
+
+  @IsNotEmpty({ message: 'English name is required' })
+  @IsString()
+  nameEn: string;
 
   @IsOptional()
   @IsString()
-  description?: string;
+  descriptionNl?: string;
+
+  @IsOptional()
+  @IsString()
+  descriptionEn?: string;
 
   @IsNotEmpty({ message: 'Price is required' })
   @IsNumber()

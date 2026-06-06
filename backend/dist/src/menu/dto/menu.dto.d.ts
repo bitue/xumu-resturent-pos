@@ -1,12 +1,15 @@
 export declare class CreateCategoryDto {
-    name: string;
+    nameNl: string;
+    nameEn: string;
     icon?: string;
     sortOrder?: number;
 }
 export declare class CreateMenuItemDto {
     categoryId: number;
-    name: string;
-    description?: string;
+    nameNl: string;
+    nameEn: string;
+    descriptionNl?: string;
+    descriptionEn?: string;
     price: number;
     imageUrl?: string;
     prepTimeMinutes?: number;

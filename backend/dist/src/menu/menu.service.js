@@ -27,7 +27,8 @@ let MenuService = class MenuService {
     async createCategory(dto, username) {
         const category = await this.prisma.categories.create({
             data: {
-                name: dto.name,
+                name_nl: dto.nameNl,
+                name_en: dto.nameEn,
                 icon: dto.icon,
                 sort_order: dto.sortOrder || 0,
                 created_by: username,
@@ -39,6 +40,7 @@ let MenuService = class MenuService {
         const items = await this.prisma.menu_items.findMany({
             where: { deleted_at: null },
             include: {
+                categories: true,
                 menu_item_allergens: {
                     include: { allergens: true },
                 },
@@ -63,8 +65,10 @@ let MenuService = class MenuService {
         const item = await this.prisma.menu_items.create({
             data: {
                 category_id: dto.categoryId,
-                name: dto.name,
-                description: dto.description,
+                name_nl: dto.nameNl,
+                name_en: dto.nameEn,
+                description_nl: dto.descriptionNl,
+                description_en: dto.descriptionEn,
                 price: dto.price,
                 image_url: dto.imageUrl,
                 prep_time_minutes: dto.prepTimeMinutes ?? 15,
@@ -85,7 +89,8 @@ let MenuService = class MenuService {
     mapCategory(c) {
         return {
             id: Number(c.id),
-            name: c.name,
+            nameNl: c.name_nl,
+            nameEn: c.name_en,
             icon: c.icon,
             sortOrder: c.sort_order,
             active: c.active,
@@ -95,9 +100,15 @@ let MenuService = class MenuService {
         return {
             id: Number(i.id),
             categoryId: Number(i.category_id),
-            name: i.name,
-            description: i.description,
+            categoryName: i.categories?.name_nl ?? '',
+            categoryNameNl: i.categories?.name_nl ?? '',
+            categoryNameEn: i.categories?.name_en ?? '',
+            nameNl: i.name_nl,
+            nameEn: i.name_en,
+            descriptionNl: i.description_nl,
+            descriptionEn: i.description_en,
             price: Number(i.price),
+            priceEur: Number(i.price),
             imageUrl: i.image_url,
             available: i.available,
             featured: i.featured,

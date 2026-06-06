@@ -10,6 +10,8 @@ import { CustomerModule } from './customer/customer.module';
 import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
 import { ReportModule } from './report/report.module';
+import { RolesModule } from './roles/roles.module';
+import { AdminModule } from './admin/admin.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { ReportModule } from './report/report.module';
     OrderModule,
     PaymentModule,
     ReportModule,
+    RolesModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [AppService],

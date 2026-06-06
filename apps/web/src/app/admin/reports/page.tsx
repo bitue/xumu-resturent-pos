@@ -7,9 +7,10 @@ import {
   BarChart, Bar, PieChart, Pie, Cell, Legend
 } from 'recharts';
 import { motion } from 'framer-motion';
+import { useTranslation } from '@/lib/i18n/use-translation';
 
-type DailySales = { date: string; totalOrders: number; totalRevenue: number; totalTax: number; totalDiscount: number };
-type TopItem = { itemName: string; quantitySold: number; revenueGenerated: number };
+type DailySales = { date: string; orderCount: number; totalRevenue: number; totalTax: number; totalDiscount: number };
+type TopItem = { itemName: string; quantitySold: number; revenue: number; menuItemNameNl?: string; menuItemNameEn?: string };
 type OrderTypeAnalytics = { orderType: string; orderCount: number; revenue: number };
 type RevenueAnalytics = { timePeriod: string; orderCount: number; revenue: number };
 type CustomerLtv = { customerId: number; customerName: string; phoneNumber: string; totalOrders: number; lifetimeValue: number };
@@ -25,6 +26,7 @@ export default function ReportsPage() {
   const [hourlyRevenue, setHourlyRevenue] = useState<RevenueAnalytics[]>([]);
   const [topLtv, setTopLtv] = useState<CustomerLtv[]>([]);
   const [newVsReturning, setNewVsReturning] = useState<NewVsReturning | null>(null);
+  const { t, lang } = useTranslation();
 
   useEffect(() => {
     async function loadReports() {
@@ -37,14 +39,17 @@ export default function ReportsPage() {
         const [dailyRes, topItemsRes, orderTypeRes, hourlyRes, ltvRes, newRetRes] = await Promise.all([
           apiFetch<DailySales[]>(`/api/reports/daily-sales?startDate=${startIso}&endDate=${end}`),
           apiFetch<TopItem[]>(`/api/reports/top-items?limit=5`),
-          apiFetch<OrderTypeAnalytics[]>(`/api/reports/order-type-analytics?startDate=${startIso}&endDate=${end}`),
+          apiFetch<OrderTypeAnalytics[]>(`/api/reports/order-types?startDate=${startIso}&endDate=${end}`),
           apiFetch<RevenueAnalytics[]>(`/api/reports/hourly-revenue?startDate=${startIso}&endDate=${end}`),
-          apiFetch<CustomerLtv[]>(`/api/reports/customers/top-ltv?limit=5`),
+          apiFetch<CustomerLtv[]>(`/api/reports/customers/ltv?limit=5`),
           apiFetch<NewVsReturning>(`/api/reports/customers/new-vs-returning?startDate=${startIso}&endDate=${end}`)
         ]);
 
         setDailySales(dailyRes);
-        setTopItems(topItemsRes);
+        setTopItems((topItemsRes || []).map(t => ({
+          ...t,
+          itemName: lang === 'en' && t.menuItemNameEn ? t.menuItemNameEn : (t.menuItemNameNl || 'Unknown')
+        })));
         setOrderTypeData(orderTypeRes);
         setHourlyRevenue(hourlyRes);
         setTopLtv(ltvRes);
@@ -56,12 +61,12 @@ export default function ReportsPage() {
       }
     }
     loadReports();
-  }, []);
+  }, [lang]);
 
   if (loading) {
     return (
       <div className="p-8 space-y-6">
-        <h1 className="text-3xl font-display font-bold">Rapportages</h1>
+        <h1 className="text-3xl font-display font-bold">{t('admin.sidebar.reports')}</h1>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="h-[400px] bg-black/5 animate-pulse rounded-2xl"></div>
           <div className="h-[400px] bg-black/5 animate-pulse rounded-2xl"></div>
@@ -71,33 +76,33 @@ export default function ReportsPage() {
   }
 
   const pieData = newVsReturning ? [
-    { name: 'Nieuwe', value: newVsReturning.newCustomersCount },
-    { name: 'Terugkerend', value: newVsReturning.returningCustomersCount }
+    { name: t('reports_analytics.new'), value: newVsReturning.newCustomersCount },
+    { name: t('reports_analytics.returning'), value: newVsReturning.returningCustomersCount }
   ] : [];
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-8 space-y-8 max-w-7xl mx-auto">
       <div>
-        <h1 className="text-3xl font-display font-bold text-[color:var(--primary)] mb-2">360° Analytics</h1>
-        <p className="text-[color:var(--text-muted)]">Overzicht van de afgelopen 30 dagen</p>
+        <h1 className="text-3xl font-display font-bold text-[color:var(--primary)] mb-2">{t('reports_analytics.title')}</h1>
+        <p className="text-[color:var(--text-muted)]">{t('reports_analytics.subtitle')}</p>
       </div>
 
       {/* Top Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)]">
-          <p className="text-sm text-[color:var(--text-muted)] font-medium">Totale Omzet (30d)</p>
+          <p className="text-sm text-[color:var(--text-muted)] font-medium">{t('reports_analytics.totalRevenue')}</p>
           <p className="text-3xl font-bold text-green-600 mt-2">
-            €{dailySales.reduce((sum, d) => sum + d.totalRevenue, 0).toFixed(2)}
+            €{dailySales.reduce((sum, d) => sum + (Number(d.totalRevenue) || 0), 0).toFixed(2)}
           </p>
         </div>
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)]">
-          <p className="text-sm text-[color:var(--text-muted)] font-medium">Totaal Bestellingen (30d)</p>
+          <p className="text-sm text-[color:var(--text-muted)] font-medium">{t('reports_analytics.totalOrders')}</p>
           <p className="text-3xl font-bold text-[color:var(--primary)] mt-2">
-            {dailySales.reduce((sum, d) => sum + d.totalOrders, 0)}
+            {dailySales.reduce((sum, d) => sum + (Number(d.orderCount) || 0), 0)}
           </p>
         </div>
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)]">
-          <p className="text-sm text-[color:var(--text-muted)] font-medium">Nieuwe Klanten (30d)</p>
+          <p className="text-sm text-[color:var(--text-muted)] font-medium">{t('reports_analytics.newCustomers')} (30d)</p>
           <p className="text-3xl font-bold text-blue-600 mt-2">
             {newVsReturning?.newCustomersCount || 0}
           </p>
@@ -107,14 +112,14 @@ export default function ReportsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Daily Sales Chart */}
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)]">
-          <h2 className="text-xl font-bold mb-6">Omzet per dag</h2>
+          <h2 className="text-xl font-bold mb-6">{t('reports_analytics.dailySales')}</h2>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={dailySales}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8DCC8" />
                 <XAxis dataKey="date" tick={{fontSize: 12}} stroke="#9ca3af" />
                 <YAxis tick={{fontSize: 12}} stroke="#9ca3af" tickFormatter={(val) => `€${val}`} />
-                <RechartsTooltip formatter={(value: number) => `€${value.toFixed(2)}`} />
+                <RechartsTooltip formatter={(value: any) => `€${Number(value).toFixed(2)}`} />
                 <Line type="monotone" dataKey="totalRevenue" stroke="var(--primary)" strokeWidth={3} dot={false} activeDot={{ r: 6 }} />
               </LineChart>
             </ResponsiveContainer>
@@ -123,7 +128,7 @@ export default function ReportsPage() {
 
         {/* Top Selling Items */}
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)]">
-          <h2 className="text-xl font-bold mb-6">Meest Verkochte Producten</h2>
+          <h2 className="text-xl font-bold mb-6">{t('reports_analytics.topItems')}</h2>
           <div className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topItems} layout="vertical" margin={{ left: 50 }}>
@@ -139,7 +144,7 @@ export default function ReportsPage() {
 
         {/* Order Types */}
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)] flex flex-col">
-          <h2 className="text-xl font-bold mb-6">Order Types (Omzet)</h2>
+          <h2 className="text-xl font-bold mb-6">{t('reports_analytics.salesDistribution')}</h2>
           <div className="h-[300px] flex-1">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -157,7 +162,7 @@ export default function ReportsPage() {
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
-                <RechartsTooltip formatter={(value: number) => `€${value.toFixed(2)}`} />
+                <RechartsTooltip formatter={(value: any) => `€${Number(value).toFixed(2)}`} />
                 <Legend />
               </PieChart>
             </ResponsiveContainer>
@@ -166,7 +171,7 @@ export default function ReportsPage() {
 
         {/* New vs Returning Customers */}
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)] flex flex-col">
-          <h2 className="text-xl font-bold mb-6">Klanten (Nieuw vs Terugkerend)</h2>
+          <h2 className="text-xl font-bold mb-6">{t('reports_analytics.customerAnalytics')}</h2>
           <div className="h-[300px] flex-1">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -191,15 +196,15 @@ export default function ReportsPage() {
 
         {/* Top LTV Customers List */}
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)] lg:col-span-2">
-          <h2 className="text-xl font-bold mb-6">Top Klanten (LTV)</h2>
+          <h2 className="text-xl font-bold mb-6">{t('reports_analytics.customerLtv')}</h2>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[color:var(--border)] text-sm text-[color:var(--text-muted)]">
-                  <th className="py-3 px-4 font-medium">Klantnaam</th>
-                  <th className="py-3 px-4 font-medium">Telefoon</th>
-                  <th className="py-3 px-4 font-medium">Bestellingen</th>
-                  <th className="py-3 px-4 font-medium text-right">Totale Waarde (LTV)</th>
+                  <th className="py-3 px-4 font-medium">{t('reports_analytics.customer')}</th>
+                  <th className="py-3 px-4 font-medium">{t('reservations_table.phone')}</th>
+                  <th className="py-3 px-4 font-medium">{t('reports_analytics.orders')}</th>
+                  <th className="py-3 px-4 font-medium text-right">{t('reports_analytics.ltv')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -215,12 +220,12 @@ export default function ReportsPage() {
                     </td>
                     <td className="py-4 px-4 text-[color:var(--text-muted)]">{c.phoneNumber}</td>
                     <td className="py-4 px-4">{c.totalOrders}</td>
-                    <td className="py-4 px-4 text-right font-bold text-green-600">€{c.lifetimeValue.toFixed(2)}</td>
+                    <td className="py-4 px-4 text-right font-bold text-green-600">€{Number(c.lifetimeValue || 0).toFixed(2)}</td>
                   </tr>
                 ))}
                 {topLtv.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="py-8 text-center text-[color:var(--text-muted)]">Nog geen klantdata beschikbaar</td>
+                    <td colSpan={4} className="py-8 text-center text-[color:var(--text-muted)]">-</td>
                   </tr>
                 )}
               </tbody>

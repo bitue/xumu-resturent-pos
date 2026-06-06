@@ -1,4 +1,4 @@
-import { Client, type IFrame } from '@stompjs/stompjs';
+import { Client, type IFrame } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
 type Listener<T> = (msg: T) => void;

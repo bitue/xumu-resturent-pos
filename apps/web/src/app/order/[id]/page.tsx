@@ -6,8 +6,10 @@ import { useStompSubscription } from '@/lib/ws/use-stomp';
 import { motion } from 'framer-motion';
 import { Check, Clock, ChefHat, Utensils, Receipt } from 'lucide-react';
 import type { Order } from '@/lib/api/types';
+import { useTranslation } from '@/lib/i18n/use-translation';
 
 export default function OrderTrackingPage({ params }: { params: { id: string } }) {
+  const { lang } = useTranslation();
   const [order, setOrder] = useState<Order | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,7 +29,7 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
 
   // Listen for order-wide status updates
   useStompSubscription<Order>('/topic/orders', (updatedOrder) => {
-    if (updatedOrder.id.toString() === params.id) {
+    if (updatedOrder?.id?.toString() === params.id) {
       setOrder(updatedOrder);
     }
   });
@@ -113,16 +115,18 @@ export default function OrderTrackingPage({ params }: { params: { id: string } }
         <div className="bg-[color:var(--bg-alt)] p-6 border-t border-[color:var(--border)]">
           <h4 className="font-bold text-[color:var(--ink)] mb-4">Overzicht</h4>
           <ul className="space-y-3">
-            {order.items.map((item: any) => (
+            {(order.items || []).map((item: any) => {
+              const itemName = lang === 'en' && item.menuItem?.nameEn ? item.menuItem.nameEn : (item.menuItem?.nameNl || 'Unknown');
+              return (
               <li key={item.id} className="flex justify-between text-[color:var(--ink)]">
-                <span><span className="text-[color:var(--text-muted)]">{item.quantity}x</span> {item.menuItemName}</span>
-                <span className="font-medium tnum">€{item.unitPriceEur.toFixed(2)}</span>
+                <span><span className="text-[color:var(--text-muted)]">{item.quantity}x</span> {itemName}</span>
+                <span className="font-medium tnum">€{(item.unitPrice || 0).toFixed(2)}</span>
               </li>
-            ))}
+            )})}
           </ul>
           <div className="mt-4 pt-4 border-t border-[color:var(--border)] flex justify-between font-bold text-lg text-[color:var(--ink)]">
             <span>Totaal</span>
-            <span className="tnum">€{order.totalAmountEur.toFixed(2)}</span>
+            <span className="tnum">€{(order.total || 0).toFixed(2)}</span>
           </div>
         </div>
       </div>

@@ -1,10 +1,11 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  previewFeatures = ["driverAdapters", "postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
+  extensions = [citext]
 }
 
 model allergens {
@@ -15,7 +16,8 @@ model allergens {
 
 model categories {
   id         BigInt       @id @default(autoincrement())
-  name       String       @db.VarChar(80)
+  name_nl    String       @db.VarChar(80)
+  name_en    String       @db.VarChar(80)
   icon       String?      @db.VarChar(40)
   sort_order Int          @default(0)
   active     Boolean      @default(true)
@@ -67,8 +69,10 @@ model menu_item_allergens {
 model menu_items {
   id                  BigInt                @id @default(autoincrement())
   category_id         BigInt
-  name                String                @db.VarChar(120)
-  description         String?
+  name_nl             String                @db.VarChar(120)
+  name_en             String                @db.VarChar(120)
+  description_nl      String?
+  description_en      String?
   price               Decimal               @db.Decimal(10, 2)
   image_url           String?               @db.VarChar(500)
   available           Boolean               @default(true)

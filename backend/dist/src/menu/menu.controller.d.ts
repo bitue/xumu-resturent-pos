@@ -8,7 +8,8 @@ export declare class MenuController {
         success: boolean;
         data: {
             id: number;
-            name: any;
+            nameNl: any;
+            nameEn: any;
             icon: any;
             sortOrder: any;
             active: any;
@@ -18,7 +19,8 @@ export declare class MenuController {
         success: boolean;
         data: {
             id: number;
-            name: any;
+            nameNl: any;
+            nameEn: any;
             icon: any;
             sortOrder: any;
             active: any;
@@ -29,9 +31,15 @@ export declare class MenuController {
         data: {
             id: number;
             categoryId: number;
-            name: any;
-            description: any;
+            categoryName: any;
+            categoryNameNl: any;
+            categoryNameEn: any;
+            nameNl: any;
+            nameEn: any;
+            descriptionNl: any;
+            descriptionEn: any;
             price: number;
+            priceEur: number;
             imageUrl: any;
             available: any;
             featured: any;
@@ -45,9 +53,15 @@ export declare class MenuController {
         data: {
             id: number;
             categoryId: number;
-            name: any;
-            description: any;
+            categoryName: any;
+            categoryNameNl: any;
+            categoryNameEn: any;
+            nameNl: any;
+            nameEn: any;
+            descriptionNl: any;
+            descriptionEn: any;
             price: number;
+            priceEur: number;
             imageUrl: any;
             available: any;
             featured: any;
@@ -61,9 +75,15 @@ export declare class MenuController {
         data: {
             id: number;
             categoryId: number;
-            name: any;
-            description: any;
+            categoryName: any;
+            categoryNameNl: any;
+            categoryNameEn: any;
+            nameNl: any;
+            nameEn: any;
+            descriptionNl: any;
+            descriptionEn: any;
             price: number;
+            priceEur: number;
             imageUrl: any;
             available: any;
             featured: any;

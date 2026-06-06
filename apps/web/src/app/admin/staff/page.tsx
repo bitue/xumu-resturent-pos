@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { apiFetch } from '@/lib/api/client';
 import { Button } from '@/components/ui/button';
 import { Check, X, Shield, ShieldAlert, MoreVertical } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n/use-translation';
 
 type User = {
   id: number;
@@ -15,6 +16,7 @@ type User = {
 const ALL_ROLES = ['SUPER_ADMIN', 'ADMIN', 'MANAGER', 'CASHIER', 'WAITER', 'KITCHEN_STAFF', 'CUSTOMER'];
 
 export default function AdminStaffPage() {
+  const { t } = useTranslation();
   const [users, setUsers] = useState<User[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,7 +46,7 @@ export default function AdminStaffPage() {
         newRoles.push(role);
       }
       if (newRoles.length === 0) {
-        alert('User must have at least one role');
+        alert(t('admin.staff.mustHaveRole'));
         return;
       }
       
@@ -57,7 +59,7 @@ export default function AdminStaffPage() {
       setUsers(prev => prev.map(u => u.id === userId ? { ...u, roles: newRoles } : u));
     } catch (e) {
       console.error('Failed to update roles', e);
-      alert('Failed to update role');
+      alert(t('admin.staff.updateFailed'));
     }
   };
 
@@ -74,23 +76,23 @@ export default function AdminStaffPage() {
     }
   };
 
-  if (isLoading) return <div className="p-8 text-center text-lg">Laden...</div>;
+  if (isLoading) return <div className="p-8 text-center text-lg">{t('common.loading')}</div>;
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-8">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-display font-bold text-[color:var(--delft-900)]">Personeel & Rechten</h1>
-        <Button variant="primary">Nieuwe Gebruiker</Button>
+        <h1 className="text-3xl font-display font-bold text-[color:var(--delft-900)]">{t('admin.staff.title')}</h1>
+        <Button variant="primary">{t('admin.staff.addStaff')}</Button>
       </div>
 
       <div className="bg-white rounded-xl border border-[color:var(--border)] shadow-sm overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-[color:var(--bg-alt)] border-b border-[color:var(--border)] text-sm text-[color:var(--text-muted)]">
-              <th className="p-4 font-medium">Naam</th>
-              <th className="p-4 font-medium">Email</th>
-              <th className="p-4 font-medium w-1/2">Rollen</th>
-              <th className="p-4 font-medium text-right">Acties</th>
+              <th className="p-4 font-medium">{t('admin.staff.name')}</th>
+              <th className="p-4 font-medium">{t('admin.staff.email')}</th>
+              <th className="p-4 font-medium w-1/2">{t('admin.staff.roles')}</th>
+              <th className="p-4 font-medium text-right">{t('admin.staff.actions')}</th>
             </tr>
           </thead>
           <tbody>

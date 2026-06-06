@@ -103,5 +103,21 @@ export declare class OrderService {
             items: any;
         };
     }>;
+    updateOrderItemStatusById(itemId: number, status: string, username: string): Promise<{
+        success: boolean;
+    }>;
+    getActiveKdsItems(): Promise<{
+        success: boolean;
+        data: {
+            id: number;
+            orderNumber: string;
+            status: string;
+            orderedAt: string;
+            menuItemName: string;
+            quantity: number;
+            specialRequest: string | null;
+            tableId: number;
+        }[];
+    }>;
     private mapOrder;
 }
