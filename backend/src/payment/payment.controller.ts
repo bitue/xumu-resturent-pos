@@ -12,7 +12,7 @@ export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
   @Post()
-  @Roles('ADMIN', 'MANAGER', 'CASHIER')
+  @Roles('ADMIN', 'MANAGER', 'CASHIER', 'WAITER')
   processPayment(
     @Param('orderId') orderId: string,
     @Body() dto: PaymentRequestDto,

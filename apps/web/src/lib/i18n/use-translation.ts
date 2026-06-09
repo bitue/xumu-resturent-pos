@@ -4,8 +4,9 @@ import { useCallback } from 'react';
 import { useLangStore } from '@/store/ui-store';
 import { nl } from './dictionaries/nl';
 import { en } from './dictionaries/en';
+import { de } from './dictionaries/de';
 
-const dictionaries = { nl, en };
+const dictionaries = { nl, en, de };
 
 export function useTranslation() {
   const lang = useLangStore(s => s.lang);

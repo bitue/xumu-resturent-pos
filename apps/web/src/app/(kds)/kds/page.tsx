@@ -57,7 +57,7 @@ function TicketCard({ ticket, onMove }: { ticket: Ticket; onMove: (id: string, t
     >
       <div className="flex justify-between items-center border-b border-[#2d251f] pb-2">
         <span className="font-bold text-lg text-white">#{ticket.id}</span>
-        <span className="px-2 py-1 bg-white/10 rounded font-bold text-[color:var(--primary)]">{t('kds.table')} {ticket.tableId}</span>
+        <span className="px-2 py-1 bg-white/10 rounded font-bold text-[color:var(--primary)]">{t('admin.kds.table')} {ticket.tableId}</span>
       </div>
       
       <div className="flex-1 space-y-1">
@@ -65,7 +65,7 @@ function TicketCard({ ticket, onMove }: { ticket: Ticket; onMove: (id: string, t
           <div key={i} className="text-white text-lg">
             <span className="font-bold mr-2">{item.qty}×</span>
             <span>{item.name}</span>
-            {item.note && <div className="text-[color:var(--warning)] text-sm ml-6 border-l-2 border-[color:var(--warning)] pl-2">{t('kds.note')}: {item.note}</div>}
+            {item.note && <div className="text-[color:var(--warning)] text-sm ml-6 border-l-2 border-[color:var(--warning)] pl-2">{t('admin.kds.note')}: {item.note}</div>}
           </div>
         ))}
       </div>
@@ -76,13 +76,13 @@ function TicketCard({ ticket, onMove }: { ticket: Ticket; onMove: (id: string, t
         </div>
         
         {ticket.status === 'PENDING' && (
-          <button onClick={() => onMove(ticket.id, 'PREPARING')} className="px-4 py-2 bg-[color:var(--willow-500)] text-[#0f0c0a] font-bold rounded hover:opacity-90 transition-opacity">{t('kds.start')}</button>
+          <button onClick={() => onMove(ticket.id, 'PREPARING')} className="px-4 py-2 bg-[color:var(--willow-500)] text-[#0f0c0a] font-bold rounded hover:opacity-90 transition-opacity">{t('admin.kds.start')}</button>
         )}
         {ticket.status === 'PREPARING' && (
-          <button onClick={() => onMove(ticket.id, 'READY')} className="px-4 py-2 bg-[color:var(--primary)] text-white font-bold rounded hover:opacity-90 transition-opacity">{t('kds.ready_btn')}</button>
+          <button onClick={() => onMove(ticket.id, 'READY')} className="px-4 py-2 bg-[color:var(--primary)] text-white font-bold rounded hover:opacity-90 transition-opacity">{t('admin.kds.ready_btn')}</button>
         )}
         {ticket.status === 'READY' && (
-          <button onClick={() => onMove(ticket.id, 'PENDING')} className="px-4 py-2 bg-[color:var(--success)] text-white font-bold rounded hover:opacity-90 transition-opacity">{t('kds.served')}</button>
+          <button onClick={() => onMove(ticket.id, 'PENDING')} className="px-4 py-2 bg-[color:var(--success)] text-white font-bold rounded hover:opacity-90 transition-opacity">{t('admin.kds.served')}</button>
         )}
       </div>
     </motion.div>
@@ -189,7 +189,7 @@ export default function KdsPage() {
     <div className="grid grid-cols-3 gap-6 h-full">
       <div className="flex flex-col h-full bg-[#120e0c] rounded-xl border border-[#2d251f] overflow-hidden">
         <div className="bg-[#1a1511] p-4 border-b border-[#2d251f] flex justify-between items-center">
-          <h2 className="font-display font-bold text-xl text-white">{t('kds.incoming')}</h2>
+          <h2 className="font-display font-bold text-xl text-white">{t('admin.kds.incoming')}</h2>
           <span className="w-8 h-8 rounded-full bg-[#2d251f] flex items-center justify-center font-bold">{pending.length}</span>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -201,7 +201,7 @@ export default function KdsPage() {
 
       <div className="flex flex-col h-full bg-[#120e0c] rounded-xl border border-[#2d251f] overflow-hidden">
         <div className="bg-[#1a1511] p-4 border-b border-[#2d251f] flex justify-between items-center">
-          <h2 className="font-display font-bold text-xl text-[color:var(--primary)]">{t('kds.cooking')}</h2>
+          <h2 className="font-display font-bold text-xl text-[color:var(--primary)]">{t('admin.kds.cooking')}</h2>
           <span className="w-8 h-8 rounded-full bg-[color:var(--primary)]/20 text-[color:var(--primary)] flex items-center justify-center font-bold">{preparing.length}</span>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -213,7 +213,7 @@ export default function KdsPage() {
 
       <div className="flex flex-col h-full bg-[#120e0c] rounded-xl border border-[#2d251f] overflow-hidden">
         <div className="bg-[#1a1511] p-4 border-b border-[#2d251f] flex justify-between items-center">
-          <h2 className="font-display font-bold text-xl text-[color:var(--success)]">{t('kds.ready')}</h2>
+          <h2 className="font-display font-bold text-xl text-[color:var(--success)]">{t('admin.kds.ready')}</h2>
           <span className="w-8 h-8 rounded-full bg-[color:var(--success)]/20 text-[color:var(--success)] flex items-center justify-center font-bold">{ready.length}</span>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">

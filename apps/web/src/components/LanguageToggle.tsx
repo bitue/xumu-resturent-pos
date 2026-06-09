@@ -6,18 +6,32 @@ import { Button } from '@/components/ui/button';
 export function LanguageToggle() {
   const { lang, setLang } = useTranslation();
 
-  const toggleLanguage = () => {
-    setLang(lang === 'nl' ? 'en' : 'nl');
-  };
-
   return (
-    <Button 
-      variant="secondary" 
-      size="sm" 
-      onClick={toggleLanguage}
-      className="font-medium min-w-[40px]"
-    >
-      {lang.toUpperCase()}
-    </Button>
+    <div className="flex items-center gap-1 border border-[color:var(--primary)] rounded-md p-0.5">
+      <Button 
+        variant={lang === 'nl' ? 'primary' : 'ghost'} 
+        size="sm" 
+        onClick={() => setLang('nl')}
+        className="px-2 h-7 text-xs"
+      >
+        NL
+      </Button>
+      <Button 
+        variant={lang === 'en' ? 'primary' : 'ghost'} 
+        size="sm" 
+        onClick={() => setLang('en')}
+        className="px-2 h-7 text-xs"
+      >
+        EN
+      </Button>
+      <Button 
+        variant={lang === 'de' ? 'primary' : 'ghost'} 
+        size="sm" 
+        onClick={() => setLang('de')}
+        className="px-2 h-7 text-xs"
+      >
+        DE
+      </Button>
+    </div>
   );
 }

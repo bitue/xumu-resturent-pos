@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: xuma
       POSTGRES_DB: xuma
     ports:
-      - '5433:5432'
+      - '5434:5432'
     volumes:
       - xuma_pgdata:/var/lib/postgresql/data
 

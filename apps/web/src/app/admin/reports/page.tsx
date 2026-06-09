@@ -113,7 +113,7 @@ export default function ReportsPage() {
         {/* Daily Sales Chart */}
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)]">
           <h2 className="text-xl font-bold mb-6">{t('reports_analytics.dailySales')}</h2>
-          <div className="h-[300px]">
+          <div className="h-[300px]" style={{ minWidth: 0, minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={dailySales}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8DCC8" />
@@ -129,7 +129,7 @@ export default function ReportsPage() {
         {/* Top Selling Items */}
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)]">
           <h2 className="text-xl font-bold mb-6">{t('reports_analytics.topItems')}</h2>
-          <div className="h-[300px]">
+          <div className="h-[300px]" style={{ minWidth: 0, minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={topItems} layout="vertical" margin={{ left: 50 }}>
                 <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#E8DCC8" />
@@ -145,7 +145,7 @@ export default function ReportsPage() {
         {/* Order Types */}
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)] flex flex-col">
           <h2 className="text-xl font-bold mb-6">{t('reports_analytics.salesDistribution')}</h2>
-          <div className="h-[300px] flex-1">
+          <div className="h-[300px] flex-1" style={{ minWidth: 0, minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -172,7 +172,7 @@ export default function ReportsPage() {
         {/* New vs Returning Customers */}
         <div className="bg-white p-6 rounded-2xl border shadow-soft border-[color:var(--border)] flex flex-col">
           <h2 className="text-xl font-bold mb-6">{t('reports_analytics.customerAnalytics')}</h2>
-          <div className="h-[300px] flex-1">
+          <div className="h-[300px] flex-1" style={{ minWidth: 0, minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie

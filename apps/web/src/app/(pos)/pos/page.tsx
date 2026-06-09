@@ -146,9 +146,9 @@ export default function PosTerminalPage() {
         
         {/* Cart Header */}
         <div className="flex-none p-4 border-b border-[color:var(--border)] flex justify-between items-center bg-[color:var(--bg-alt)]">
-          <h2 className="font-display font-bold text-xl text-[color:var(--ink)]">{t('pos.order')}</h2>
+          <h2 className="font-display font-bold text-xl text-[color:var(--ink)]">{t('admin.pos.order')}</h2>
           <span className="text-sm font-medium bg-[color:var(--warning-bg)] text-[color:var(--warning)] px-2 py-1 rounded">
-            {cart.type === 'DINE_IN' ? (cart.tableId ? `${t('reservations_table.table')} ${cart.tableId}` : t('pos.chooseTable')) : cart.type}
+            {cart.type === 'DINE_IN' ? (cart.tableId ? `${t('admin.reservations_table.table')} ${cart.tableId}` : t('admin.pos.chooseTable')) : cart.type}
           </span>
         </div>
 
@@ -156,7 +156,7 @@ export default function PosTerminalPage() {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {cart.lines.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-[color:var(--text-muted)] italic text-sm">
-              <p>{t('pos.emptyCart')}</p>
+              <p>{t('admin.pos.emptyCart')}</p>
             </div>
           ) : (
             cart.lines.map((line) => (
@@ -182,15 +182,15 @@ export default function PosTerminalPage() {
         <div className="flex-none p-4 border-t border-[color:var(--border)] bg-[color:var(--bg-alt)]">
           <div className="space-y-2 mb-4 text-sm">
             <div className="flex justify-between text-[color:var(--text-muted)]">
-              <span>{t('pos.subtotal')}</span>
+              <span>{t('admin.pos.subtotal')}</span>
               <span>€ {subtotal.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-[color:var(--text-muted)]">
-              <span>{t('pos.tax')}</span>
+              <span>{t('admin.pos.tax')}</span>
               <span>€ {taxAmount.toFixed(2)}</span>
             </div>
             <div className="flex justify-between text-[color:var(--ink)] font-bold text-lg pt-2 border-t border-[color:var(--border)]">
-              <span>{t('pos.total')}</span>
+              <span>{t('admin.pos.total')}</span>
               <span>€ {total.toFixed(2)}</span>
             </div>
           </div>
@@ -200,11 +200,11 @@ export default function PosTerminalPage() {
               {t('common.cancel')}
             </Button>
             <Button variant="secondary" disabled={cart.lines.length === 0} className="w-full text-[color:var(--info)] border-[color:var(--info)]">
-              {t('pos.hold')}
+              {t('admin.pos.hold')}
             </Button>
           </div>
           <Button variant="accent" onClick={handleCheckout} disabled={cart.lines.length === 0} className="w-full h-14 text-lg">
-            {t('pos.placeOrder')}
+            {t('admin.pos.placeOrder')}
           </Button>
         </div>
 

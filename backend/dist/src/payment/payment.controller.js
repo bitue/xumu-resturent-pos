@@ -35,7 +35,7 @@ let PaymentController = class PaymentController {
 exports.PaymentController = PaymentController;
 __decorate([
     (0, common_1.Post)(),
-    (0, roles_decorator_1.Roles)('ADMIN', 'MANAGER', 'CASHIER'),
+    (0, roles_decorator_1.Roles)('ADMIN', 'MANAGER', 'CASHIER', 'WAITER'),
     __param(0, (0, common_1.Param)('orderId')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Req)()),

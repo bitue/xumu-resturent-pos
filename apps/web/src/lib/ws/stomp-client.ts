@@ -23,9 +23,20 @@ export class StompService {
   }
 
   subscribe<T>(topic: string, cb: Listener<T>): () => void {
+    if (!this.client) {
+      this.connect(''); // Auto-connect with empty token
+    }
+    
+    // STOMP client queues subscriptions if not connected yet, so we can just call subscribe.
+    // However, if we do that, we need to make sure we wait for it to be active, or use the STOMP client's internal queue.
+    // In @stomp/stompjs, you can call subscribe before connecting, but you have to do it in onConnect or just let the Client handle it.
+    // Actually, @stomp/stompjs Client doesn't queue subscriptions before onConnect. We should do it in onConnect.
     if (!this.client?.connected) {
-      console.warn('STOMP not connected yet. Cannot subscribe to', topic);
-      // For mock UI purposes, we'll return a no-op function instead of throwing
+      const originalOnConnect = this.client!.onConnect;
+      this.client!.onConnect = (frame) => {
+        if (originalOnConnect) originalOnConnect(frame);
+        this.subscribe(topic, cb);
+      };
       return () => {};
     }
     const sub = this.client.subscribe(topic, msg => cb(JSON.parse(msg.body) as T));

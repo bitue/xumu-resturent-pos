@@ -2,8 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type LangState = {
-  lang: 'nl' | 'en';
-  setLang: (lang: 'nl' | 'en') => void;
+  lang: 'nl' | 'en' | 'de';
+  setLang: (lang: 'nl' | 'en' | 'de') => void;
 };
 
 export const useLangStore = create<LangState>()(

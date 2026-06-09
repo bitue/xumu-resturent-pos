@@ -90,7 +90,7 @@ export default function AdminDashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white p-6 rounded-xl border border-[color:var(--border)] shadow-sm">
           <h2 className="text-lg font-bold text-[color:var(--ink)] mb-6">{t('admin.dashboard.revenueChartTitle')}</h2>
-          <div className="h-80 w-full">
+          <div className="h-80 w-full" style={{ minWidth: 0, minHeight: 0 }}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={sales}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E8DCC8" />

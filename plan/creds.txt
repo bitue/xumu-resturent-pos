@@ -1,0 +1,14 @@
+Super Admin 
+Email : admin@xuma.nl
+Password : admin123
+
+
+Cashier User (has POS + Orders access)
+
+Email: cashier@xuma.nl
+Password: cashier123
+
+Waiter User (has POS access)
+
+Email: waiter1@xuma.nl
+Password: waiter123

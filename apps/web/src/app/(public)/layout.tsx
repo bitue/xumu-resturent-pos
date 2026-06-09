@@ -9,7 +9,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
     <div className="min-h-screen flex flex-col">
       <header className="sticky top-0 z-50 w-full border-b border-[color:var(--border)] bg-[color:var(--surface)]/80 backdrop-blur">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="font-display text-2xl text-[color:var(--primary)] font-bold">Xuma</div>
+          <a href="/" className="font-display text-2xl text-[color:var(--primary)] font-bold">Xuma</a>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[color:var(--ink-soft)]">
             <a href="/menu" className="hover:text-[color:var(--primary)] transition-colors">{t('nav.menu')}</a>
             <a href="/reserve" className="hover:text-[color:var(--primary)] transition-colors">{t('nav.reserve')}</a>
@@ -30,11 +30,13 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               >
                 EN
               </button>
+              <button 
+                onClick={() => setLang('de')} 
+                className={`px-2 py-1 rounded text-xs font-bold transition-all ${lang === 'de' ? 'bg-[color:var(--primary)] text-white shadow-soft' : 'text-[color:var(--ink-soft)] hover:text-[color:var(--primary)]'}`}
+              >
+                DE
+              </button>
             </div>
-
-            <a href="/reserve" className="hidden sm:inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 bg-[color:var(--accent)] text-[color:var(--accent-fg)] hover:bg-rose-500 h-9 px-4 py-2">
-              {t('nav.book_table')}
-            </a>
           </div>
         </div>
       </header>
@@ -51,6 +53,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             <div className="md:hidden flex bg-[color:var(--surface)] border border-[color:var(--border)] rounded-md p-1">
               <button onClick={() => setLang('nl')} className={`px-2 py-1 rounded text-xs font-bold transition-all ${lang === 'nl' ? 'bg-[color:var(--primary)] text-white' : ''}`}>NL</button>
               <button onClick={() => setLang('en')} className={`px-2 py-1 rounded text-xs font-bold transition-all ${lang === 'en' ? 'bg-[color:var(--primary)] text-white' : ''}`}>EN</button>
+              <button onClick={() => setLang('de')} className={`px-2 py-1 rounded text-xs font-bold transition-all ${lang === 'de' ? 'bg-[color:var(--primary)] text-white' : ''}`}>DE</button>
             </div>
           </div>
         </div>
